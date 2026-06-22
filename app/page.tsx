@@ -2,7 +2,10 @@
 
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
-import Link from "next/link";
+import { CharacterCard } from "@/components/CharacterCard";
+import { Pagination } from "@/components/Pagination";
+import { LoadingState } from "@/components/LoadingState";
+import { ErrorState } from "@/components/ErrorState";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -41,19 +44,17 @@ export default function Home() {
   });
 
   return (
-    <main className="flex flex-col items-center min-h-screen py-12 px-6 bg-zinc-50 dark:bg-black">
-      <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50 mb-8">
+    <main className="flex flex-col items-center min-h-screen py-12 px-6">
+      <h1 className="text-3xl font-bold text-gf-peach mb-8 tracking-tight">
         Gravity Falls Characters
       </h1>
 
-      {isLoading && (
-        <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
-      )}
+      {isLoading && <LoadingState variant="grid" />}
 
       {isError && (
-        <p className="text-red-500">
-          {error instanceof Error ? error.message : "Something went wrong"}
-        </p>
+        <ErrorState
+          message={error instanceof Error ? error.message : undefined}
+        />
       )}
 
       {data && (
@@ -61,45 +62,24 @@ export default function Home() {
           <ul className="grid grid-cols-2 gap-4 w-full max-w-3xl sm:grid-cols-3 md:grid-cols-4">
             {data.data.map((character) => (
               <li key={character._id}>
-                <Link
-                  href={`/character/${character._id}`}
-                  className="flex flex-col items-center gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-center hover:border-zinc-400 dark:hover:border-zinc-600 hover:shadow-sm transition-all"
-                >
-                  {character.imageUrl && (
-                    <img
-                      src={character.imageUrl}
-                      alt={character.name}
-                      className="h-24 w-24 rounded-full object-cover"
-                    />
-                  )}
-                  <span className="text-sm font-medium text-zinc-800 dark:text-zinc-100">
-                    {character.name}
-                  </span>
-                </Link>
+                <CharacterCard
+                  id={character._id}
+                  name={character.name}
+                  imageUrl={character.imageUrl}
+                />
               </li>
             ))}
           </ul>
 
-          <div className="flex items-center gap-4 mt-8">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={!data.info.previousPage}
-              className="rounded-full border border-zinc-300 dark:border-zinc-700 px-5 py-2 text-sm font-medium disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            >
-              Previous
-            </button>
-
-            <span className="text-sm text-zinc-500 dark:text-zinc-400">
-              Page {page} of {data.info.totalPages}
-            </span>
-
-            <button
-              onClick={() => setPage((p) => p + 1)}
-              disabled={!data.info.nextPage}
-              className="rounded-full border border-zinc-300 dark:border-zinc-700 px-5 py-2 text-sm font-medium disabled:opacity-40 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            >
-              Next
-            </button>
+          <div className="mt-8">
+            <Pagination
+              page={page}
+              totalPages={data.info.totalPages}
+              hasPrevious={!!data.info.previousPage}
+              hasNext={!!data.info.nextPage}
+              onPrevious={() => setPage((p) => Math.max(1, p - 1))}
+              onNext={() => setPage((p) => p + 1)}
+            />
           </div>
         </>
       )}

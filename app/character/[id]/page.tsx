@@ -3,6 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { use } from "react";
+import { DetailSection } from "@/components/DetailSection";
+import { LoadingState } from "@/components/LoadingState";
+import { ErrorState } from "@/components/ErrorState";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -28,30 +31,6 @@ async function fetchCharacter(id: string): Promise<ApiResponse> {
   const res = await fetch(`${API_URL}/character/${id}`);
   if (!res.ok) throw new Error("Character not found");
   return res.json();
-}
-
-function DetailSection({ title, items }: { title: string; items: string[] }) {
-  return (
-    <div className="flex flex-col gap-2">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 dark:text-zinc-500">
-        {title}
-      </h2>
-      {items.length > 0 ? (
-        <ul className="flex flex-wrap gap-2">
-          {items.map((item) => (
-            <li
-              key={item}
-              className="rounded-full bg-zinc-100 dark:bg-zinc-800 px-3 py-1 text-sm text-zinc-700 dark:text-zinc-300"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p className="text-sm text-zinc-300 dark:text-zinc-600">—</p>
-      )}
-    </div>
-  );
 }
 
 const SECTIONS: { title: string; key: keyof Character }[] = [
@@ -80,42 +59,39 @@ export default function CharacterPage({
   const character = data?.data;
 
   return (
-    <main className="flex flex-col items-center min-h-screen py-12 px-6 bg-zinc-50 dark:bg-black">
+    <main className="flex flex-col items-center min-h-screen py-12 px-6">
       <div className="w-full max-w-2xl">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors mb-8"
+          className="inline-flex items-center gap-1 text-sm font-medium text-gf-peach/60 hover:text-gf-peach transition-colors mb-8"
         >
           ← Back to Characters
         </Link>
 
-        {isLoading && (
-          <p className="text-zinc-500 dark:text-zinc-400">Loading...</p>
-        )}
+        {isLoading && <LoadingState variant="detail" />}
 
         {isError && (
-          <p className="text-red-500">
-            {error instanceof Error ? error.message : "Something went wrong"}
-          </p>
+          <ErrorState
+            message={error instanceof Error ? error.message : undefined}
+          />
         )}
 
         {character && (
           <div className="flex flex-col gap-6">
-            {/* Hero */}
-            <div className="flex items-start gap-6 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6">
+            <div className="flex items-start gap-6 rounded-2xl border border-gf-crimson/30 bg-card p-6 shadow-lg shadow-black/30">
               {character.imageUrl && (
                 <img
                   src={character.imageUrl}
                   alt={character.name}
-                  className="h-36 w-36 rounded-xl object-cover border border-zinc-200 dark:border-zinc-800 shrink-0"
+                  className="h-36 w-36 rounded-2xl object-cover ring-2 ring-gf-peach/20 shrink-0"
                 />
               )}
               <div className="flex flex-col gap-3 pt-1">
                 <div>
-                  <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 leading-tight">
+                  <h1 className="text-2xl font-bold text-gf-peach leading-tight">
                     {character.name}
                   </h1>
-                  <p className="mt-1 text-sm text-zinc-400 dark:text-zinc-500">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     ID #{character._id}
                   </p>
                 </div>
@@ -123,20 +99,16 @@ export default function CharacterPage({
                   href={character.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 self-start rounded-full border border-zinc-200 dark:border-zinc-700 px-3 py-1 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:border-zinc-400 dark:hover:border-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                  className="inline-flex items-center gap-1.5 self-start rounded-full border border-gf-peach/30 px-3 py-1 text-xs font-medium text-gf-peach/70 hover:border-gf-peach hover:text-gf-peach transition-colors"
                 >
                   Disney Wiki ↗
                 </a>
               </div>
             </div>
 
-            {/* All detail sections */}
-            <div className="grid grid-cols-1 gap-px rounded-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-zinc-200 dark:bg-zinc-800">
+            <div className="grid grid-cols-1 gap-px rounded-2xl border border-gf-forest/40 overflow-hidden bg-gf-forest/20">
               {SECTIONS.map(({ title, key }) => (
-                <div
-                  key={key}
-                  className="flex flex-col gap-2 bg-white dark:bg-zinc-900 px-6 py-4"
-                >
+                <div key={key} className="bg-card px-6 py-4">
                   <DetailSection
                     title={title}
                     items={character[key] as string[]}
