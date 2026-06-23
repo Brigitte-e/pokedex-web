@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchPokemon, capitalize, TYPE_COLORS, getPokemonSprite } from "@/lib/pokeapi";
+import { t } from "@/lib/i18n";
 
 interface Props {
   name: string;
@@ -25,14 +26,14 @@ export function PokemonPreview({ name, onRemove }: Props) {
       <button
         onClick={onRemove}
         className="absolute top-2 right-2 text-muted-foreground hover:text-destructive text-xs"
-        aria-label="Remove"
+        aria-label={t("teamBuilder.remove")}
       >
         ✕
       </button>
       {isLoading && (
         <div className="h-20 w-20 rounded-full bg-muted animate-pulse" />
       )}
-      {isError && <span className="text-xs text-destructive">Not found</span>}
+      {isError && <span className="text-xs text-destructive">{t("teamBuilder.notFound")}</span>}
       {data && (
         <>
           <img src={sprite ?? undefined} alt={name} className="h-20 w-20 object-contain drop-shadow" />

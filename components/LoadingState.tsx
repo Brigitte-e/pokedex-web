@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import { t } from "@/lib/i18n";
 
 export type LoadingStateVariant = "grid" | "detail" | "type-detail" | "item-list" | "move-list" | "type-grid" | "inline";
 
@@ -113,6 +114,6 @@ export function LoadingState({ variant = "inline" }: LoadingStateProps) {
   }
 
   return (
-    <p className="text-sm text-muted-foreground animate-pulse">Loading…</p>
+    <p className="text-sm text-muted-foreground animate-pulse">{t("common.loading")}</p>
   );
 }

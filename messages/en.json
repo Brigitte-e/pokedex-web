@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "title": "PokéDex — Explore the Pokémon World",
+    "description": "Browse Pokémon, types, moves, items, build your team and save favorites."
+  },
+  "nav": {
+    "logo": "PokéDex",
+    "pokemon": "Pokémon",
+    "types": "Types",
+    "moves": "Moves",
+    "items": "Items",
+    "teamBuilder": "Team Builder",
+    "favorites": "Favorites"
+  },
+  "common": {
+    "back": "Back",
+    "loading": "Loading…",
+    "errorDefault": "Something went wrong",
+    "empty": "—",
+    "close": "Close",
+    "previous": "← Previous",
+    "next": "Next →",
+    "noDescription": "No description available."
+  },
+  "favorites": {
+    "add": "Add to favorites",
+    "remove": "Remove from favorites",
+    "empty": "No favorites yet. Star a Pokémon on its detail page.",
+    "savedCount": "{count} saved Pokémon",
+    "clearAll": "Clear all favorites"
+  },
+  "typeFilter": {
+    "filterByType": "Filter by type",
+    "typesSelected": "{count} types selected",
+    "clearAll": "Clear all",
+    "searchPlaceholder": "Search types…",
+    "noTypesFound": "No types found",
+    "scrollForMore": "Scroll for more…",
+    "removeType": "Remove {name}"
+  },
+  "generationFilter": {
+    "filterByGeneration": "Filter by generation",
+    "allGenerations": "All generations",
+    "generation": "Generation {suffix}"
+  },
+  "moveModal": {
+    "power": "Power",
+    "accuracy": "Accuracy",
+    "pp": "PP"
+  },
+  "itemModal": {
+    "cost": "Cost",
+    "category": "Category"
+  },
+  "pages": {
+    "types": {
+      "title": "Types",
+      "subtitle": "Browse all Pokémon types and their damage relations."
+    },
+    "moves": {
+      "title": "Moves",
+      "subtitle": "{count} moves total"
+    },
+    "items": {
+      "title": "Items",
+      "subtitle": "{count} items total"
+    },
+    "favorites": {
+      "title": "Favorites"
+    },
+    "teamBuilder": {
+      "title": "Team Builder",
+      "subtitle": "Build your team of up to 6 Pokémon."
+    },
+    "pokedex": {
+      "title": "Pokédex"
+    }
+  },
+  "pokemonList": {
+    "withType": "Pokémon with this type",
+    "matchingTypes": "Pokémon matching all selected types",
+    "fromGeneration": "Pokémon from {generation}",
+    "matchingFilters": "Pokémon matching filters",
+    "noMatch": "No Pokémon match the selected filters.",
+    "moreCount": "+ {count} more Pokémon",
+    "all": "All Pokémon"
+  },
+  "pokemonDetail": {
+    "backToPokedex": "Back to Pokédex",
+    "height": "Height",
+    "weight": "Weight",
+    "baseXp": "Base XP",
+    "heightUnit": " m",
+    "weightUnit": " kg",
+    "baseStats": "Base Stats",
+    "abilities": "Abilities",
+    "hidden": "(hidden)",
+    "moves": "Moves ({count})"
+  },
+  "typeDetail": {
+    "backToTypes": "Back to Types",
+    "damageRelations": "Damage Relations",
+    "strongAgainst": "Strong against (2×)",
+    "weakAgainst": "Weak against (2× from)",
+    "notVeryEffective": "Not very effective (½×)",
+    "resists": "Resists (½× from)",
+    "noEffectAgainst": "No effect against (0×)",
+    "immuneTo": "Immune to (0× from)",
+    "moves": "Moves"
+  },
+  "teamBuilder": {
+    "teamFull": "Your team is full (max 6).",
+    "alreadyOnTeam": "{name} is already on your team.",
+    "inputPlaceholder": "Enter Pokémon name (e.g. pikachu)",
+    "add": "Add",
+    "emptySlot": "?",
+    "clearTeam": "Clear team",
+    "remove": "Remove",
+    "notFound": "Not found"
+  },
+  "api": {
+    "pokeApiError": "PokeAPI error {status}: {path}"
+  }
+}

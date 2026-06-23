@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, X, Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { capitalize, TYPE_COLORS } from "@/lib/pokeapi";
+import { t } from "@/lib/i18n";
 
 interface TypeOption {
   name: string;
@@ -75,10 +76,10 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
 
   const label =
     selected.length === 0
-      ? "Filter by type"
+      ? t("typeFilter.filterByType")
       : selected.length === 1
         ? capitalize(selected[0])
-        : `${selected.length} types selected`;
+        : t("typeFilter.typesSelected", { count: selected.length });
 
   return (
     <div ref={containerRef} className="relative w-64">
@@ -112,7 +113,7 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
               type="button"
               onClick={(e) => { e.stopPropagation(); clearAll(); }}
               className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
-              aria-label="Clear all"
+              aria-label={t("typeFilter.clearAll")}
             >
               <X size={14} />
             </button>
@@ -137,7 +138,7 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
               ref={searchRef}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search types…"
+              placeholder={t("typeFilter.searchPlaceholder")}
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
             {search && (
@@ -156,7 +157,7 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
             className="max-h-56 overflow-y-auto py-1"
           >
             {visible.length === 0 && (
-              <li className="px-3 py-2 text-xs text-muted-foreground">No types found</li>
+              <li className="px-3 py-2 text-xs text-muted-foreground">{t("typeFilter.noTypesFound")}</li>
             )}
             {visible.map((type) => {
               const isSelected = selected.includes(type.name);
@@ -182,7 +183,7 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
             })}
             {hasMore && (
               <li className="px-3 py-1 text-center text-xs text-muted-foreground">
-                Scroll for more…
+                {t("typeFilter.scrollForMore")}
               </li>
             )}
           </ul>
@@ -203,7 +204,7 @@ function TypeBadge({ name, onRemove }: { name: string; onRemove: () => void }) {
       <button
         onClick={(e) => { e.stopPropagation(); onRemove(); }}
         className="opacity-70 hover:opacity-100"
-        aria-label={`Remove ${name}`}
+        aria-label={t("typeFilter.removeType", { name })}
       >
         <X size={10} />
       </button>

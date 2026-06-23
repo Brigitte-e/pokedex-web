@@ -2,6 +2,7 @@ import Link from "next/link";
 import { capitalize, TYPE_COLORS } from "@/lib/pokeapi";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { LazyImage } from "@/components/LazyImage";
+import { t } from "@/lib/i18n";
 import type { Pokemon } from "@/types";
 
 interface Props {
@@ -54,16 +55,16 @@ export function PokemonHero({ pokemon }: Props) {
 
         <div className="grid grid-cols-3 gap-3 mt-1">
           <div className="flex flex-col items-center rounded-xl bg-muted px-3 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Height</span>
-            <span className="text-sm font-bold">{(pokemon.height / 10).toFixed(1)} m</span>
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{t("pokemonDetail.height")}</span>
+            <span className="text-sm font-bold">{(pokemon.height / 10).toFixed(1)}{t("pokemonDetail.heightUnit")}</span>
           </div>
           <div className="flex flex-col items-center rounded-xl bg-muted px-3 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Weight</span>
-            <span className="text-sm font-bold">{(pokemon.weight / 10).toFixed(1)} kg</span>
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{t("pokemonDetail.weight")}</span>
+            <span className="text-sm font-bold">{(pokemon.weight / 10).toFixed(1)}{t("pokemonDetail.weightUnit")}</span>
           </div>
           <div className="flex flex-col items-center rounded-xl bg-muted px-3 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Base XP</span>
-            <span className="text-sm font-bold">{pokemon.base_experience ?? "—"}</span>
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{t("pokemonDetail.baseXp")}</span>
+            <span className="text-sm font-bold">{pokemon.base_experience ?? t("common.empty")}</span>
           </div>
         </div>
       </div>

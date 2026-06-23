@@ -2,6 +2,7 @@
 
 import { CharacterCard } from "@/components/CharacterCard";
 import { useFavorites } from "@/hooks/useFavorites";
+import { t } from "@/lib/i18n";
 
 export function FavoritesList() {
   const { favorites, remove, clear } = useFavorites();
@@ -9,7 +10,7 @@ export function FavoritesList() {
   if (favorites.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
-        No favorites yet. Star a Pokémon on its detail page.
+        {t("favorites.empty")}
       </p>
     );
   }
@@ -17,7 +18,7 @@ export function FavoritesList() {
   return (
     <>
       <p className="text-muted-foreground mb-8 text-sm">
-        {favorites.length} saved Pokémon
+        {t("favorites.savedCount", { count: favorites.length })}
       </p>
 
       <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -27,7 +28,7 @@ export function FavoritesList() {
             <button
               onClick={() => remove(fav.id)}
               className="absolute top-2 right-2 rounded-full bg-background/80 p-1 text-xs text-muted-foreground opacity-0 group-hover/fav:opacity-100 hover:text-destructive transition-all"
-              aria-label="Remove from favorites"
+              aria-label={t("favorites.remove")}
             >
               ✕
             </button>
@@ -39,7 +40,7 @@ export function FavoritesList() {
         onClick={clear}
         className="mt-8 text-xs text-muted-foreground hover:text-destructive transition-colors"
       >
-        Clear all favorites
+        {t("favorites.clearAll")}
       </button>
     </>
   );

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { t } from "@/lib/i18n";
 
 export interface PaginationProps {
   page: number;
@@ -20,13 +21,13 @@ export function Pagination({
   return (
     <div className="flex items-center gap-4">
       <Button variant="outline" size="sm" onClick={onPrevious} disabled={!hasPrevious}>
-        ← Previous
+        {t("common.previous")}
       </Button>
       <span className="text-sm font-medium text-pk-yellow/70 tabular-nums">
         {page} / {totalPages}
       </span>
       <Button variant="outline" size="sm" onClick={onNext} disabled={!hasNext}>
-        Next →
+        {t("common.next")}
       </Button>
     </div>
   );

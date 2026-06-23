@@ -1,4 +1,5 @@
 import { capitalize } from "@/lib/pokeapi";
+import { t } from "@/lib/i18n";
 import type { StatEntry } from "@/types";
 
 const STAT_MAX = 255;
@@ -30,7 +31,7 @@ export function PokemonStats({ stats }: Props) {
   return (
     <section className="rounded-2xl border border-border bg-card p-6">
       <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
-        Base Stats
+        {t("pokemonDetail.baseStats")}
       </h2>
       <div className="flex flex-col gap-3">
         {stats.map(({ stat, base_stat }) => (

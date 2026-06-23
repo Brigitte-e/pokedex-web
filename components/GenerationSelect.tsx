@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatGenerationLabel, t } from "@/lib/i18n";
 
 interface GenerationOption {
   name: string;
@@ -14,10 +15,7 @@ interface GenerationSelectProps {
   onChange: (generation: string | null) => void;
 }
 
-export function formatGenerationLabel(name: string): string {
-  const suffix = name.replace("generation-", "").toUpperCase();
-  return `Generation ${suffix}`;
-}
+export { formatGenerationLabel };
 
 export function GenerationSelect({ generations, selected, onChange }: GenerationSelectProps) {
   const [open, setOpen] = useState(false);
@@ -33,7 +31,7 @@ export function GenerationSelect({ generations, selected, onChange }: Generation
     return () => document.removeEventListener("mousedown", handleOutside);
   }, []);
 
-  const label = selected ? formatGenerationLabel(selected) : "Filter by generation";
+  const label = selected ? formatGenerationLabel(selected) : t("generationFilter.filterByGeneration");
 
   return (
     <div ref={containerRef} className="relative w-56">
@@ -68,7 +66,7 @@ export function GenerationSelect({ generations, selected, onChange }: Generation
               }}
               className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm hover:bg-muted/50 select-none"
             >
-              <span className="flex-1 text-muted-foreground">All generations</span>
+              <span className="flex-1 text-muted-foreground">{t("generationFilter.allGenerations")}</span>
               {!selected && <Check size={14} className="shrink-0 text-pk-yellow" />}
             </li>
             {generations.map((gen) => {

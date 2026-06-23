@@ -1,8 +1,10 @@
+import { t } from "@/lib/i18n";
+
 export interface ErrorStateProps {
   message?: string;
 }
 
-export function ErrorState({ message = "Something went wrong" }: ErrorStateProps) {
+export function ErrorState({ message = t("common.errorDefault") }: ErrorStateProps) {
   return (
     <div
       role="alert"

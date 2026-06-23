@@ -5,7 +5,7 @@ import { CharacterCard } from "@/components/CharacterCard";
 import { Pagination } from "@/components/Pagination";
 import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
-import { formatGenerationLabel } from "@/components/GenerationSelect";
+import { formatGenerationLabel, t } from "@/lib/i18n";
 import { usePokemonListQuery, PAGE_SIZE, type PokemonListInitialData } from "../../hooks/usePokemonListQuery";
 import { useTypesMultiQuery, intersectPokemon } from "../../hooks/useTypeFilterQuery";
 import { useGenerationQuery, filterByGeneration } from "../../hooks/useGenerationFilterQuery";
@@ -21,10 +21,12 @@ interface Props {
 }
 
 function getFilterHeading(types: string[], generation: string | null): string {
-  if (types.length === 1 && !generation) return "Pokémon with this type";
-  if (types.length > 1 && !generation) return "Pokémon matching all selected types";
-  if (types.length === 0 && generation) return `Pokémon from ${formatGenerationLabel(generation)}`;
-  return "Pokémon matching filters";
+  if (types.length === 1 && !generation) return t("pokemonList.withType");
+  if (types.length > 1 && !generation) return t("pokemonList.matchingTypes");
+  if (types.length === 0 && generation) {
+    return t("pokemonList.fromGeneration", { generation: formatGenerationLabel(generation) });
+  }
+  return t("pokemonList.matchingFilters");
 }
 
 export function PokemonListClient({
@@ -101,7 +103,7 @@ export function PokemonListClient({
           </h3>
           {filteredPokemon.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No Pokémon match the selected filters.
+              {t("pokemonList.noMatch")}
             </p>
           ) : (
             <>
@@ -114,7 +116,7 @@ export function PokemonListClient({
               </ul>
               {filteredPokemon.length > 60 && (
                 <p className="mt-4 text-sm text-muted-foreground text-center">
-                  + {filteredPokemon.length - 60} more Pokémon
+                  {t("pokemonList.moreCount", { count: filteredPokemon.length - 60 })}
                 </p>
               )}
             </>
@@ -125,7 +127,7 @@ export function PokemonListClient({
       {!isFiltered && list && !listLoading && (
         <>
           <h3 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
-            All Pokémon
+            {t("pokemonList.all")}
           </h3>
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {list.results.map((p, i) => {

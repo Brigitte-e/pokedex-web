@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { Nav } from "@/components/Nav";
+import { t } from "@/lib/i18n";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PokéDex — Explore the Pokémon World",
-  description: "Browse Pokémon, types, moves, items, build your team and save favorites.",
+  title: t("metadata.title"),
+  description: t("metadata.description"),
 };
 
 export default function RootLayout({

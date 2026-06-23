@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchMove, capitalize, TYPE_COLORS } from "@/lib/pokeapi";
+import { t } from "@/lib/i18n";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
@@ -26,7 +27,7 @@ export function MoveModal({ moveName, onClose }: MoveModalProps) {
   const description = data
     ? (data.effect_entries.find((e) => e.language.name === "en")?.short_effect ??
        data.effect_entries[0]?.short_effect ??
-       "No description available.")
+       t("common.noDescription"))
     : undefined;
 
   return (
@@ -72,9 +73,9 @@ export function MoveModal({ moveName, onClose }: MoveModalProps) {
           {data ? (
             <>
               {[
-                { label: "Power", value: data.power ?? "—" },
-                { label: "Accuracy", value: data.accuracy != null ? `${data.accuracy}%` : "—" },
-                { label: "PP", value: data.pp },
+                { label: t("moveModal.power"), value: data.power ?? t("common.empty") },
+                { label: t("moveModal.accuracy"), value: data.accuracy != null ? `${data.accuracy}%` : t("common.empty") },
+                { label: t("moveModal.pp"), value: data.pp },
               ].map(({ label, value }) => (
                 <div key={label} className="rounded-xl bg-muted/50 px-3 py-2 text-center">
                   <div className="text-xs text-muted-foreground mb-1">{label}</div>

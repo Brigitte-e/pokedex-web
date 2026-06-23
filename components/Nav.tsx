@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { t } from "@/lib/i18n";
 
 const LINKS = [
-  { href: "/pokemon", label: "Pokémon" },
-  { href: "/types", label: "Types" },
-  { href: "/moves", label: "Moves" },
-  { href: "/items", label: "Items" },
-  { href: "/team-builder", label: "Team Builder" },
-  { href: "/favorites", label: "Favorites" },
-];
+  { href: "/pokemon", labelKey: "nav.pokemon" },
+  { href: "/types", labelKey: "nav.types" },
+  { href: "/moves", labelKey: "nav.moves" },
+  { href: "/items", labelKey: "nav.items" },
+  { href: "/team-builder", labelKey: "nav.teamBuilder" },
+  { href: "/favorites", labelKey: "nav.favorites" },
+] as const;
 
 export function Nav() {
   const pathname = usePathname();
@@ -24,11 +25,11 @@ export function Nav() {
           className="flex items-center gap-2 text-xl font-bold text-pk-yellow shrink-0"
         >
           <span className="text-2xl">⚡</span>
-          PokéDex
+          {t("nav.logo")}
         </Link>
 
         <nav className="flex items-center gap-1 overflow-x-auto">
-          {LINKS.map(({ href, label }) => {
+          {LINKS.map(({ href, labelKey }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
@@ -41,7 +42,7 @@ export function Nav() {
                     : "text-muted-foreground hover:text-foreground hover:bg-muted"
                 )}
               >
-                {label}
+                {t(labelKey)}
               </Link>
             );
           })}

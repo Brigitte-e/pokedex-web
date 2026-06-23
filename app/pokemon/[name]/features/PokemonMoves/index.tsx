@@ -4,6 +4,7 @@ import { useState } from "react";
 import { capitalize } from "@/lib/pokeapi";
 import { Badge } from "@/components/ui/badge";
 import { MoveModal } from "@/components/MoveModal";
+import { t } from "@/lib/i18n";
 import type { MoveEntry } from "@/types";
 
 interface Props {
@@ -20,7 +21,7 @@ export function PokemonMoves({ moves }: Props) {
       )}
       <section className="rounded-2xl border border-border bg-card p-6">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-3">
-          Moves ({moves.length})
+          {t("pokemonDetail.moves", { count: moves.length })}
         </h2>
         <div className="flex flex-wrap gap-2 max-h-50 overflow-y-auto">
           {moves.map(({ move }) => (

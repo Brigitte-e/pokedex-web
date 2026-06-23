@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { capitalize } from "@/lib/pokeapi";
 import { MoveModal } from "@/components/MoveModal";
+import { t } from "@/lib/i18n";
 import type { NamedResource } from "@/types";
 
 interface Props {
@@ -21,7 +22,7 @@ export function TypeMoves({ moves }: Props) {
       )}
       <section className="rounded-2xl border border-border bg-card p-6">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
-          Moves <span className="text-muted-foreground font-normal">({moves.length})</span>
+          {t("typeDetail.moves")} <span className="text-muted-foreground font-normal">({moves.length})</span>
         </h2>
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
           {moves.map((move) => (

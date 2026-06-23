@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { t } from "@/lib/i18n";
 
 export interface DetailSectionProps {
   title: string;
@@ -20,7 +21,7 @@ export function DetailSection({ title, items }: DetailSectionProps) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-muted-foreground/50">—</p>
+        <p className="text-sm text-muted-foreground/50">{t("common.empty")}</p>
       )}
     </div>
   );

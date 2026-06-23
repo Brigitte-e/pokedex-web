@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchItem, capitalize } from "@/lib/pokeapi";
+import { t } from "@/lib/i18n";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
@@ -26,7 +27,7 @@ export function ItemModal({ itemName, onClose }: ItemModalProps) {
   const description = data
     ? (data.effect_entries.find((e) => e.language.name === "en")?.short_effect ??
        data.effect_entries[0]?.short_effect ??
-       "No description available.")
+       t("common.noDescription"))
     : undefined;
 
   return (
@@ -77,8 +78,8 @@ export function ItemModal({ itemName, onClose }: ItemModalProps) {
           {data ? (
             <>
               {[
-                { label: "Cost", value: data.cost > 0 ? `₽${data.cost.toLocaleString()}` : "—" },
-                { label: "Category", value: capitalize(data.category.name) },
+                { label: t("itemModal.cost"), value: data.cost > 0 ? `₽${data.cost.toLocaleString()}` : t("common.empty") },
+                { label: t("itemModal.category"), value: capitalize(data.category.name) },
               ].map(({ label, value }) => (
                 <div key={label} className="rounded-xl bg-muted/50 px-3 py-2 text-center">
                   <div className="text-xs text-muted-foreground mb-1">{label}</div>

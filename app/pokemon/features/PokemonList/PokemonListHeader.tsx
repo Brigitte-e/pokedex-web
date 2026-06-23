@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { TypeFilter } from "../TypeFilter";
 import { GenerationFilter } from "../GenerationFilter";
 import { PageHeader } from "@/components/PageHeader";
+import { t } from "@/lib/i18n";
 
 interface Props {
   selectedTypes: string[];
@@ -42,7 +43,7 @@ export function PokemonListHeader({ selectedTypes, selectedGeneration }: Props) 
 
   return (
     <PageHeader
-      title="Pokédex"
+      title={t("pages.pokedex.title")}
       rightSlot={
         <div className="flex flex-wrap items-center justify-end gap-2">
           <GenerationFilter selected={selectedGeneration} onChange={handleGenerationChange} />

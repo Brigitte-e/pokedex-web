@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { capitalize } from "@/lib/pokeapi";
 import { ErrorState } from "@/components/ErrorState";
+import { t } from "@/lib/i18n";
 import { PokemonPreview } from "./PokemonPreview";
 
 const MAX_TEAM = 6;
@@ -20,11 +21,11 @@ export function TeamBuilder() {
     const name = input.trim().toLowerCase();
     if (!name) return;
     if (team.length >= MAX_TEAM) {
-      setError("Your team is full (max 6).");
+      setError(t("teamBuilder.teamFull"));
       return;
     }
     if (team.some((s) => s.name === name)) {
-      setError(`${capitalize(name)} is already on your team.`);
+      setError(t("teamBuilder.alreadyOnTeam", { name: capitalize(name) }));
       return;
     }
     setError(null);
@@ -50,7 +51,7 @@ export function TeamBuilder() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter Pokémon name (e.g. pikachu)"
+          placeholder={t("teamBuilder.inputPlaceholder")}
           className="flex-1 rounded-xl border border-border bg-card px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pk-yellow/50"
         />
         <button
@@ -58,7 +59,7 @@ export function TeamBuilder() {
           disabled={team.length >= MAX_TEAM}
           className="rounded-xl bg-pk-red px-5 py-2 text-sm font-bold text-white disabled:opacity-40 hover:brightness-110 transition"
         >
-          Add
+          {t("teamBuilder.add")}
         </button>
       </form>
 
@@ -73,7 +74,7 @@ export function TeamBuilder() {
             key={`empty-${i}`}
             className="flex items-center justify-center rounded-2xl border-2 border-dashed border-border bg-card/30 h-36 text-muted-foreground/30 text-4xl"
           >
-            ?
+            {t("teamBuilder.emptySlot")}
           </div>
         ))}
       </div>
@@ -83,7 +84,7 @@ export function TeamBuilder() {
           onClick={() => setTeam([])}
           className="mt-8 text-xs text-muted-foreground hover:text-destructive transition-colors"
         >
-          Clear team
+          {t("teamBuilder.clearTeam")}
         </button>
       )}
     </>
