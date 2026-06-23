@@ -87,13 +87,14 @@ export default function PokemonDetailPage({
 
               <div className="flex gap-2 flex-wrap">
                 {pokemon.types.map(({ type }) => (
-                  <span
+                  <Link
                     key={type.name}
-                    className="rounded-full px-3 py-1 text-xs font-bold uppercase text-white"
+                    href={`/types/${type.name}`}
+                    className="rounded-full px-3 py-1 text-xs font-bold uppercase text-white transition-opacity hover:opacity-80"
                     style={{ backgroundColor: TYPE_COLORS[type.name] ?? "#888" }}
                   >
                     {type.name}
-                  </span>
+                  </Link>
                 ))}
               </div>
 

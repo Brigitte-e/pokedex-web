@@ -145,6 +145,10 @@ export function getPokemonSprite(nameOrId: string | number): string {
   return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${nameOrId}.png`;
 }
 
+export function getItemSprite(name: string): string {
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${name}.png`;
+}
+
 export function getIdFromUrl(url: string): number {
   const parts = url.replace(/\/$/, "").split("/");
   return parseInt(parts[parts.length - 1], 10);

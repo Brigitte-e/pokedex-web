@@ -3,10 +3,9 @@
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { use } from "react";
-import { fetchType, capitalize, TYPE_COLORS, getIdFromUrl } from "@/lib/pokeapi";
+import { fetchType, capitalize, TYPE_COLORS } from "@/lib/pokeapi";
 import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
-import { CharacterCard } from "@/components/CharacterCard";
 
 export default function TypeDetailPage({
   params,
@@ -58,9 +57,6 @@ export default function TypeDetailPage({
             <h1 className="text-4xl font-bold uppercase tracking-widest">
               {capitalize(type.name)}
             </h1>
-            <p className="mt-1 text-white/70 text-sm">
-              {type.pokemon.length} Pokémon
-            </p>
           </div>
 
           {/* Damage relations */}
@@ -91,27 +87,6 @@ export default function TypeDetailPage({
             </div>
           </section>
 
-          {/* Pokémon of this type */}
-          <section>
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
-              Pokémon with this type
-            </h2>
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {type.pokemon.slice(0, 60).map(({ pokemon: p }) => {
-                const id = getIdFromUrl(p.url);
-                return (
-                  <li key={p.name}>
-                    <CharacterCard id={id} name={p.name} types={[name]} />
-                  </li>
-                );
-              })}
-            </ul>
-            {type.pokemon.length > 60 && (
-              <p className="mt-4 text-sm text-muted-foreground text-center">
-                + {type.pokemon.length - 60} more Pokémon
-              </p>
-            )}
-          </section>
         </div>
       )}
     </main>
