@@ -25,6 +25,7 @@ export function PokemonHero({ pokemon }: Props) {
           height={160}
           wrapperClassName="h-40 w-40"
           className="object-contain drop-shadow-2xl"
+          fetchPriority="high"
           unoptimized
         />
       )}

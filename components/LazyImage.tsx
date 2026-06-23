@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils";
 type LazyImageProps = Omit<ImageProps, "onLoad" | "onError"> & {
   wrapperClassName?: string;
   skeletonClassName?: string;
+  fetchPriority?: "high" | "low" | "auto";
 };
 
-export function LazyImage({ wrapperClassName, skeletonClassName, className, ...props }: LazyImageProps) {
+export function LazyImage({ wrapperClassName, skeletonClassName, className, fetchPriority = "auto", ...props }: LazyImageProps) {
   const imgRef = useRef<HTMLImageElement>(null);
   const skeletonRef = useRef<HTMLSpanElement>(null);
   const [loaded, setLoaded] = useState(false);
@@ -34,6 +35,7 @@ export function LazyImage({ wrapperClassName, skeletonClassName, className, ...p
       />
       <Image
         loading="eager"
+        fetchPriority={fetchPriority}
         {...props}
         ref={imgRef as React.Ref<HTMLImageElement>}
         className={cn(className)}
