@@ -1,149 +1,18 @@
-const BASE = process.env.NEXT_PUBLIC_POKE_API_URL;
+export { fetchPokemonList, fetchPokemon } from "@/app/api/pokemon";
+export { fetchTypeList, fetchType } from "@/app/api/types";
+export { fetchMoveList, fetchMove } from "@/app/api/moves";
+export { fetchItemList, fetchItem } from "@/app/api/items";
+export { fetchAbilityList } from "@/app/api/abilities";
 
-export interface NamedResource {
-  name: string;
-  url: string;
-}
-
-export interface ListResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: NamedResource[];
-}
-
-export interface PokemonSprites {
-  front_default: string | null;
-  front_shiny: string | null;
-  other?: {
-    "official-artwork"?: {
-      front_default: string | null;
-      front_shiny: string | null;
-    };
-  };
-}
-
-export interface StatEntry {
-  base_stat: number;
-  stat: NamedResource;
-}
-
-export interface TypeSlot {
-  slot: number;
-  type: NamedResource;
-}
-
-export interface AbilitySlot {
-  ability: NamedResource;
-  is_hidden: boolean;
-  slot: number;
-}
-
-export interface MoveEntry {
-  move: NamedResource;
-}
-
-export interface Pokemon {
-  id: number;
-  name: string;
-  height: number;
-  weight: number;
-  base_experience: number;
-  sprites: PokemonSprites;
-  types: TypeSlot[];
-  abilities: AbilitySlot[];
-  moves: MoveEntry[];
-  stats: StatEntry[];
-  species: NamedResource;
-}
-
-export interface PokemonType {
-  id: number;
-  name: string;
-  damage_relations: {
-    double_damage_from: NamedResource[];
-    double_damage_to: NamedResource[];
-    half_damage_from: NamedResource[];
-    half_damage_to: NamedResource[];
-    no_damage_from: NamedResource[];
-    no_damage_to: NamedResource[];
-  };
-  moves: NamedResource[];
-  pokemon: { pokemon: NamedResource; slot: number }[];
-}
-
-export interface Move {
-  id: number;
-  name: string;
-  accuracy: number | null;
-  power: number | null;
-  pp: number;
-  type: NamedResource;
-  damage_class: NamedResource;
-  effect_entries: { effect: string; short_effect: string; language: NamedResource }[];
-}
-
-export interface Item {
-  id: number;
-  name: string;
-  cost: number;
-  category: NamedResource;
-  effect_entries: { effect: string; short_effect: string; language: NamedResource }[];
-  sprites: { default: string | null };
-}
-
-async function get<T>(path: string): Promise<T> {
-  const url = path.startsWith("http") ? path : `${BASE}${path}`;
-  const res = await fetch(url, { next: { revalidate: 3600 } });
-  if (!res.ok) throw new Error(`PokeAPI error ${res.status}: ${path}`);
-  return res.json();
-}
-
-export function fetchPokemonList(offset = 0, limit = 20) {
-  return get<ListResponse>(`/pokemon?offset=${offset}&limit=${limit}`);
-}
-
-export function fetchPokemon(nameOrId: string | number) {
-  return get<Pokemon>(`/pokemon/${nameOrId}`);
-}
-
-export function fetchTypeList() {
-  return get<ListResponse>(`/type?limit=100`);
-}
-
-export function fetchType(name: string) {
-  return get<PokemonType>(`/type/${name}`);
-}
-
-export function fetchMoveList(offset = 0, limit = 20) {
-  return get<ListResponse>(`/move?offset=${offset}&limit=${limit}`);
-}
-
-export function fetchMove(name: string) {
-  return get<Move>(`/move/${name}`);
-}
-
-export function fetchItemList(offset = 0, limit = 20) {
-  return get<ListResponse>(`/item?offset=${offset}&limit=${limit}`);
-}
-
-export function fetchItem(name: string) {
-  return get<Item>(`/item/${name}`);
-}
-
-export function fetchAbilityList(offset = 0, limit = 20) {
-  return get<ListResponse>(`/ability?offset=${offset}&limit=${limit}`);
-}
+export type { NamedResource, ListResponse } from "@/types/common";
+export type { Pokemon, PokemonType, PokemonSprites, StatEntry, TypeSlot, AbilitySlot, MoveEntry } from "@/types/pokemon";
+export type { Move } from "@/types/move";
+export type { Item } from "@/types/item";
 
 export function getPokemonSprite(nameOrId: string | number): string {
-  const id =
-    typeof nameOrId === "number"
-      ? nameOrId
-      : parseInt(nameOrId, 10);
-  if (!isNaN(id)) {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-  }
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${nameOrId}.png`;
+  const id = typeof nameOrId === "number" ? nameOrId : parseInt(nameOrId, 10);
+  const segment = !isNaN(id) ? id : nameOrId;
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${segment}.png`;
 }
 
 export function getItemSprite(name: string): string {

@@ -32,15 +32,14 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
   const hasMore = visibleCount < filtered.length;
 
   useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
+    setTimeout(() => setVisibleCount(PAGE_SIZE), 0);
   }, [search]);
 
   useEffect(() => {
     if (open) {
       setTimeout(() => searchRef.current?.focus(), 0);
     } else {
-      setSearch("");
-      setVisibleCount(PAGE_SIZE);
+      setTimeout(() => { setSearch(""); setVisibleCount(PAGE_SIZE); }, 0);
     }
   }, [open]);
 
@@ -84,14 +83,17 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
   return (
     <div ref={containerRef} className="relative w-64">
       {/* Trigger */}
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className={cn(
-          "flex w-full items-center justify-between gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium transition-colors hover:border-pk-yellow/50",
-          open && "border-pk-yellow/50"
-        )}
+      <div
+        role="combobox"
         aria-expanded={open}
         aria-haspopup="listbox"
+        tabIndex={0}
+        onClick={() => setOpen((o) => !o)}
+        onKeyDown={(e) => e.key === "Enter" && setOpen((o) => !o)}
+        className={cn(
+          "flex w-full cursor-pointer items-start justify-between gap-2 rounded-xl border border-border bg-card px-3 py-2 text-sm font-medium transition-colors hover:border-pk-yellow/50",
+          open && "border-pk-yellow/50"
+        )}
       >
         <span className="flex min-w-0 flex-1 flex-wrap items-center gap-1">
           {selected.length === 0 ? (
@@ -104,18 +106,16 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
             </span>
           )}
         </span>
-        <span className="flex shrink-0 items-center gap-1">
+        <span className="flex shrink-0 items-center gap-1 mt-0.5">
           {selected.length > 0 && (
-            <span
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               onClick={(e) => { e.stopPropagation(); clearAll(); }}
-              onKeyDown={(e) => e.key === "Enter" && (e.stopPropagation(), clearAll())}
               className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
               aria-label="Clear all"
             >
               <X size={14} />
-            </span>
+            </button>
           )}
           <ChevronDown
             size={16}
@@ -125,7 +125,7 @@ export function TypeMultiSelect({ types, selected, onChange }: TypeMultiSelectPr
             )}
           />
         </span>
-      </button>
+      </div>
 
       {/* Dropdown */}
       {open && (
@@ -200,16 +200,13 @@ function TypeBadge({ name, onRemove }: { name: string; onRemove: () => void }) {
       style={{ backgroundColor: color }}
     >
       {name}
-      <span
-        role="button"
-        tabIndex={0}
+      <button
         onClick={(e) => { e.stopPropagation(); onRemove(); }}
-        onKeyDown={(e) => e.key === "Enter" && (e.stopPropagation(), onRemove())}
         className="opacity-70 hover:opacity-100"
         aria-label={`Remove ${name}`}
       >
         <X size={10} />
-      </span>
+      </button>
     </span>
   );
 }

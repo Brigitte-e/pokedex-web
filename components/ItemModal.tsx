@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { FadeImage } from "./FadeImage";
+import { LazyImage } from "./LazyImage";
 
 interface ItemModalProps {
   itemName: string;
@@ -36,7 +36,7 @@ export function ItemModal({ itemName, onClose }: ItemModalProps) {
           {data ? (
             <div className="flex items-start gap-3">
               {data.sprites.default && (
-                <FadeImage
+                <LazyImage
                   src={data.sprites.default}
                   alt={data.name}
                   width={40}

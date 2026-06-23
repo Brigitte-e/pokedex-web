@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import { FadeImage } from "@/components/FadeImage";
+import { LazyImage } from "@/components/LazyImage";
 import { cn } from "@/lib/utils";
 import { capitalize, getPokemonSprite, TYPE_COLORS } from "@/lib/pokeapi";
 
@@ -27,7 +27,7 @@ export function CharacterCard({ id, name, types = [], className, fetchPriority }
         className="flex flex-col items-center gap-3 p-5 text-center"
       >
         <div className="relative h-24 w-24">
-          <FadeImage
+          <LazyImage
             src={sprite}
             alt={name}
             width={96}
