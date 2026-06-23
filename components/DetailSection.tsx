@@ -8,7 +8,7 @@ export interface DetailSectionProps {
 export function DetailSection({ title, items }: DetailSectionProps) {
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-gf-peach/60">
+      <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60">
         {title}
       </h2>
       {items.length > 0 ? (

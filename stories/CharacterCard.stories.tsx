@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs";
 import { CharacterCard } from "../components/CharacterCard";
 
 const meta: Meta<typeof CharacterCard> = {
-  title: "Components/CharacterCard",
+  title: "Components/PokemonCard",
   component: CharacterCard,
   tags: ["autodocs"],
   parameters: {
@@ -13,24 +13,26 @@ const meta: Meta<typeof CharacterCard> = {
 export default meta;
 type Story = StoryObj<typeof CharacterCard>;
 
-export const WithImage: Story = {
+export const Default: Story = {
   args: {
-    id: 1,
-    name: "Dipper Pines",
-    imageUrl: "https://static.wikia.nocookie.net/gravityfalls/images/d/da/S1e1_dipper.png",
+    id: 25,
+    name: "pikachu",
+    types: ["electric"],
   },
 };
 
-export const WithoutImage: Story = {
+export const DualType: Story = {
   args: {
-    id: 2,
-    name: "Mabel Pines",
+    id: 6,
+    name: "charizard",
+    types: ["fire", "flying"],
   },
 };
 
-export const LongName: Story = {
+export const LegendaryWithLongName: Story = {
   args: {
-    id: 3,
-    name: "Grunkle Stanford Filbrick Pines",
+    id: 384,
+    name: "rayquaza",
+    types: ["dragon", "flying"],
   },
 };

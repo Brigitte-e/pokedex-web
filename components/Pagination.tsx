@@ -22,7 +22,7 @@ export function Pagination({
       <Button variant="outline" size="sm" onClick={onPrevious} disabled={!hasPrevious}>
         ← Previous
       </Button>
-      <span className="text-sm font-medium text-gf-peach/70 tabular-nums">
+      <span className="text-sm font-medium text-pk-yellow/70 tabular-nums">
         {page} / {totalPages}
       </span>
       <Button variant="outline" size="sm" onClick={onNext} disabled={!hasNext}>

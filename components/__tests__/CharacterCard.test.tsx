@@ -10,25 +10,30 @@ jest.mock("next/link", () => {
 });
 
 describe("CharacterCard", () => {
-  it("renders the character name", () => {
-    render(<CharacterCard id={1} name="Dipper Pines" />);
-    expect(screen.getByText("Dipper Pines")).toBeInTheDocument();
+  it("renders the Pokémon name", () => {
+    render(<CharacterCard id={25} name="pikachu" />);
+    expect(screen.getByText("Pikachu")).toBeInTheDocument();
   });
 
-  it("renders an image when imageUrl is provided", () => {
-    render(<CharacterCard id={1} name="Dipper" imageUrl="https://example.com/dipper.png" />);
-    const img = screen.getByRole("img", { name: "Dipper" });
-    expect(img).toHaveAttribute("src", "https://example.com/dipper.png");
+  it("renders the sprite image", () => {
+    render(<CharacterCard id={25} name="pikachu" />);
+    const img = screen.getByRole("img", { name: "pikachu" });
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute("src", expect.stringContaining("25"));
   });
 
-  it("renders a fallback avatar when no imageUrl", () => {
-    render(<CharacterCard id={2} name="Mabel" />);
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
-    expect(screen.getByText("M")).toBeInTheDocument();
+  it("renders type badges when types are provided", () => {
+    render(<CharacterCard id={25} name="pikachu" types={["electric"]} />);
+    expect(screen.getByText("electric")).toBeInTheDocument();
   });
 
-  it("links to the correct character page", () => {
-    render(<CharacterCard id={42} name="Gideon" />);
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/character/42");
+  it("links to the correct Pokémon page", () => {
+    render(<CharacterCard id={25} name="pikachu" />);
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/pokemon/pikachu");
+  });
+
+  it("renders the padded Pokédex number", () => {
+    render(<CharacterCard id={25} name="pikachu" />);
+    expect(screen.getByText("#0025")).toBeInTheDocument();
   });
 });

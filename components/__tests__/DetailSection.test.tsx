@@ -8,9 +8,9 @@ describe("DetailSection", () => {
   });
 
   it("renders each item as a badge", () => {
-    render(<DetailSection title="Allies" items={["Dipper", "Mabel"]} />);
-    expect(screen.getByText("Dipper")).toBeInTheDocument();
-    expect(screen.getByText("Mabel")).toBeInTheDocument();
+    render(<DetailSection title="Abilities" items={["overgrow", "chlorophyll"]} />);
+    expect(screen.getByText("overgrow")).toBeInTheDocument();
+    expect(screen.getByText("chlorophyll")).toBeInTheDocument();
   });
 
   it("renders an em dash when items is empty", () => {

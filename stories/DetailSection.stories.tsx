@@ -12,21 +12,21 @@ type Story = StoryObj<typeof DetailSection>;
 
 export const WithItems: Story = {
   args: {
-    title: "TV Shows",
-    items: ["Gravity Falls", "Gravity Falls: Shorts"],
+    title: "Abilities",
+    items: ["overgrow", "chlorophyll"],
   },
 };
 
 export const Empty: Story = {
   args: {
-    title: "Films",
+    title: "Moves",
     items: [],
   },
 };
 
 export const ManyItems: Story = {
   args: {
-    title: "Allies",
-    items: ["Dipper Pines", "Mabel Pines", "Grunkle Stan", "Wendy Corduroy", "Soos Ramirez"],
+    title: "Moves",
+    items: ["tackle", "growl", "vine-whip", "razor-leaf", "solar-beam", "leech-seed"],
   },
 };

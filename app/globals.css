@@ -1,30 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  /* Gravity Falls palette — direct values so Tailwind v4 generates utilities correctly */
-  --color-gf-crimson: #732335;
-  --color-gf-brown: #713d27;
-  --color-gf-peach: #e8a789;
-  --color-gf-forest: #33544c;
-  --color-gf-dark: #1e1e20;
+  /* Pokémon palette */
+  --color-pk-red: #cc0000;
+  --color-pk-red-dark: #9b0000;
+  --color-pk-yellow: #ffcb05;
+  --color-pk-blue: #3b4cca;
+  --color-pk-blue-dark: #2a3a9f;
+  --color-pk-silver: #b8b8d0;
+  --color-pk-dark: #1a1a2e;
+  --color-pk-darker: #0f0f1e;
 
-  --color-background: #1e1e20;
-  --color-foreground: #f0e6d8;
-  --color-card: #27272a;
-  --color-card-foreground: #f0e6d8;
-  --color-primary: #732335;
-  --color-primary-foreground: #f0e6d8;
-  --color-secondary: #33544c;
-  --color-secondary-foreground: #f0e6d8;
-  --color-muted: #313135;
-  --color-muted-foreground: #a08878;
-  --color-accent: #713d27;
-  --color-accent-foreground: #f0e6d8;
-  --color-destructive: #c0392b;
-  --color-destructive-foreground: #f0e6d8;
-  --color-border: #3a3a3e;
-  --color-input: #3a3a3e;
-  --color-ring: #e8a789;
+  --color-background: #1a1a2e;
+  --color-foreground: #f0f0f8;
+  --color-card: #16213e;
+  --color-card-foreground: #f0f0f8;
+  --color-primary: #cc0000;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #3b4cca;
+  --color-secondary-foreground: #ffffff;
+  --color-muted: #2a2a4a;
+  --color-muted-foreground: #9090b0;
+  --color-accent: #ffcb05;
+  --color-accent-foreground: #1a1a2e;
+  --color-destructive: #cc0000;
+  --color-destructive-foreground: #ffffff;
+  --color-border: #2e2e50;
+  --color-input: #2e2e50;
+  --color-ring: #ffcb05;
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
@@ -36,7 +39,7 @@
 }
 
 body {
-  background-color: #1e1e20;
-  color: #f0e6d8;
+  background-color: #1a1a2e;
+  color: #f0f0f8;
   font-family: Arial, Helvetica, sans-serif;
 }
