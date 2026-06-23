@@ -23,7 +23,7 @@ export function useGenerationQuery(generation: string | null, initialData?: Gene
     staleTime: 5 * 60 * 1000,
     enabled: !!generation,
     initialData,
-    initialDataUpdatedAt: initialData ? Date.now() : undefined,
+    initialDataUpdatedAt: initialData ? () => Date.now() : undefined,
   });
 }
 

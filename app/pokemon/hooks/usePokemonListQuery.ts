@@ -27,6 +27,6 @@ export function usePokemonListQuery({ page, enabled = true, initialData }: UsePo
     placeholderData: keepPreviousData,
     enabled,
     initialData: matchedInitialData,
-    initialDataUpdatedAt: matchedInitialData ? Date.now() : undefined,
+    initialDataUpdatedAt: matchedInitialData ? () => Date.now() : undefined,
   });
 }

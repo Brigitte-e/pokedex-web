@@ -25,6 +25,6 @@ export function useItemListQuery({ page, initialData }: UseItemListQueryOptions)
     queryFn: () => fetchItemList(offset, ITEM_LIST_PAGE_SIZE),
     placeholderData: keepPreviousData,
     initialData: matchedInitialData,
-    initialDataUpdatedAt: matchedInitialData ? Date.now() : undefined,
+    initialDataUpdatedAt: matchedInitialData ? () => Date.now() : undefined,
   });
 }

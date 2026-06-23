@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     // Cypress files use namespace augmentation to extend Chainable — not app code
     "cypress/**",
     "cypress.config.ts",
+    'storybook-static/**',
   ]),
 ]);
 

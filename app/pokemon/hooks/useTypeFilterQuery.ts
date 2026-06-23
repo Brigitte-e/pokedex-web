@@ -25,7 +25,7 @@ export function useTypesMultiQuery(selectedTypes: string[], initialData?: Pokemo
     staleTime: 5 * 60 * 1000,
     enabled: selectedTypes.length > 0,
     initialData: matchedInitialData,
-    initialDataUpdatedAt: matchedInitialData ? Date.now() : undefined,
+    initialDataUpdatedAt: matchedInitialData ? () => Date.now() : undefined,
   });
 }
 

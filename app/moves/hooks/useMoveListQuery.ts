@@ -25,6 +25,6 @@ export function useMoveListQuery({ page, initialData }: UseMoveListQueryOptions)
     queryFn: () => fetchMoveList(offset, MOVE_LIST_PAGE_SIZE),
     placeholderData: keepPreviousData,
     initialData: matchedInitialData,
-    initialDataUpdatedAt: matchedInitialData ? Date.now() : undefined,
+    initialDataUpdatedAt: matchedInitialData ? () => Date.now() : undefined,
   });
 }
