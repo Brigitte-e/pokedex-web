@@ -171,11 +171,11 @@ export default function PokemonPage() {
       {selectedTypes.length === 0 && list && (
         <>
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {list.results.map((p) => {
+            {list.results.map((p, i) => {
               const id = getIdFromUrl(p.url);
               return (
                 <li key={p.name}>
-                  <CharacterCard id={id} name={p.name} />
+                  <CharacterCard id={id} name={p.name} fetchPriority={i === 0 && page === 1 ? "high" : undefined} />
                 </li>
               );
             })}

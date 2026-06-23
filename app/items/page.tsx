@@ -51,7 +51,7 @@ export default function ItemsPage() {
                 >
                   <FadeImage
                     src={getItemSprite(item.name)}
-                    alt=""
+                    alt={item.name}
                     width={24}
                     height={24}
                     className="object-contain"

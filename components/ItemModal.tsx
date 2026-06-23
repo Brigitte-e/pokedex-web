@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { fetchItem, capitalize } from "@/lib/pokeapi";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,6 +10,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { FadeImage } from "./FadeImage";
 
 interface ItemModalProps {
   itemName: string;
@@ -34,9 +34,9 @@ export function ItemModal({ itemName, onClose }: ItemModalProps) {
       <DialogContent>
         <DialogHeader>
           {data ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               {data.sprites.default && (
-                <Image
+                <FadeImage
                   src={data.sprites.default}
                   alt={data.name}
                   width={40}
@@ -53,7 +53,7 @@ export function ItemModal({ itemName, onClose }: ItemModalProps) {
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <Skeleton className="h-10 w-10 rounded" />
+              <Skeleton className="h-10 w-10 rounded-full" />
               <div className="space-y-1">
                 <Skeleton className="h-5 w-32" />
                 <Skeleton className="h-3 w-20" />

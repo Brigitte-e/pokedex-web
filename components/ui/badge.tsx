@@ -12,7 +12,7 @@ const badgeVariants = cva(
         secondary:
           "bg-pk-blue/40 text-secondary-foreground border border-pk-blue/60",
         accent:
-          "bg-pk-yellow/20 text-accent-foreground border border-pk-yellow/50",
+          "bg-pk-yellow/20 text-pk-yellow/70 border border-pk-yellow/50",
         outline:
           "border border-pk-yellow/40 text-pk-yellow bg-transparent",
       },

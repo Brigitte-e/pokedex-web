@@ -68,6 +68,7 @@ export interface PokemonType {
     no_damage_from: NamedResource[];
     no_damage_to: NamedResource[];
   };
+  moves: NamedResource[];
   pokemon: { pokemon: NamedResource; slot: number }[];
 }
 

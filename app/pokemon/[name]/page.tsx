@@ -2,13 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
 import { fetchPokemon, capitalize, TYPE_COLORS } from "@/lib/pokeapi";
 import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { Badge } from "@/components/ui/badge";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { FadeImage } from "@/components/FadeImage";
+import { MoveModal } from "@/components/MoveModal";
 
 const STAT_MAX = 255;
 
@@ -37,6 +38,7 @@ export default function PokemonDetailPage({
   params: Promise<{ name: string }>;
 }) {
   const { name } = use(params);
+  const [selectedMove, setSelectedMove] = useState<string | null>(null);
 
   const { data: pokemon, isLoading, isError, error } = useQuery({
     queryKey: ["pokemon", name],
@@ -49,6 +51,10 @@ export default function PokemonDetailPage({
     pokemon?.sprites.front_default;
 
   return (
+    <>
+    {selectedMove && (
+      <MoveModal moveName={selectedMove} onClose={() => setSelectedMove(null)} />
+    )}
     <main className="mx-auto max-w-3xl px-6 py-10">
       <Link
         href="/pokemon"
@@ -154,16 +160,24 @@ export default function PokemonDetailPage({
             <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-3">
               Moves ({pokemon.moves.length})
             </h2>
-            <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
+            <div className="flex flex-wrap gap-2 max-h-50 overflow-y-auto">
               {pokemon.moves.map(({ move }) => (
-                <Badge key={move.name} variant="outline">
-                  {capitalize(move.name)}
-                </Badge>
+                <button
+                  key={move.name}
+                  onClick={() => setSelectedMove(move.name)}
+                  className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+                >
+                  <Badge variant="outline" className="cursor-pointer hover:bg-muted transition-colors">
+                    {capitalize(move.name)}
+                  </Badge>
+                </button>
               ))}
             </div>
           </section>
         </div>
       )}
+
     </main>
+    </>
   );
 }

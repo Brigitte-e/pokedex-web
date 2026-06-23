@@ -9,17 +9,16 @@ export interface PokemonCardProps {
   name: string;
   types?: string[];
   className?: string;
+  fetchPriority?: "high" | "low" | "auto";
 }
 
-export function CharacterCard({ id, name, types = [], className }: PokemonCardProps) {
+export function CharacterCard({ id, name, types = [], className, fetchPriority }: PokemonCardProps) {
   const sprite = getPokemonSprite(id);
-  const primaryType = types[0];
-  const typeColor = primaryType ? TYPE_COLORS[primaryType] : undefined;
 
   return (
     <Card
       className={cn(
-        "overflow-hidden border-border hover:border-pk-yellow/40 hover:shadow-pk-red/20 hover:shadow-xl transition-all duration-300 group",
+        "border-border hover:border-pk-yellow/40 hover:shadow-pk-red/20 hover:shadow-xl transition-all duration-300 group",
         className
       )}
     >
@@ -33,8 +32,10 @@ export function CharacterCard({ id, name, types = [], className }: PokemonCardPr
             alt={name}
             width={96}
             height={96}
+            fetchPriority={fetchPriority}
+            loading={fetchPriority === "high" ? "eager" : undefined}
             wrapperClassName="h-24 w-24"
-            className="object-contain drop-shadow-lg group-hover:scale-110 transition-transform duration-300"
+            className="object-contain drop-shadow-lg group-hover:scale-110 transition-transform duration-300 ease-out will-change-transform"
           />
         </div>
 

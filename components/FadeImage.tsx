@@ -22,10 +22,11 @@ export function FadeImage({ wrapperClassName, skeletonClassName, style, classNam
       )} />
       <Image
         {...props}
-        className={className}
-        style={{ opacity: loaded ? 1 : 0, transition: "opacity 1200ms ease", ...style }}
+        className={cn("transition-transform duration-300 ease-out will-change-transform", className)}
+        style={{ opacity: loaded ? 1 : 0, ...style }}
         onLoad={reveal}
         onError={reveal}
+        alt={props.alt ?? ""}
       />
     </span>
   );
