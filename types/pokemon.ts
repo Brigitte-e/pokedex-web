@@ -59,3 +59,9 @@ export interface PokemonType {
   moves: NamedResource[];
   pokemon: { pokemon: NamedResource; slot: number }[];
 }
+
+export interface Generation {
+  id: number;
+  name: string;
+  pokemon_species: NamedResource[];
+}

@@ -5,19 +5,37 @@ import { CharacterCard } from "@/components/CharacterCard";
 import { Pagination } from "@/components/Pagination";
 import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
+import { formatGenerationLabel } from "@/components/GenerationSelect";
 import { usePokemonListQuery, PAGE_SIZE, type PokemonListInitialData } from "../../hooks/usePokemonListQuery";
 import { useTypesMultiQuery, intersectPokemon } from "../../hooks/useTypeFilterQuery";
+import { useGenerationQuery, filterByGeneration } from "../../hooks/useGenerationFilterQuery";
 import { getIdFromUrl } from "@/lib/pokeapi";
-import type { PokemonType } from "@/types";
+import type { Generation, NamedResource, PokemonType } from "@/types";
 
 interface Props {
   initialData: PokemonListInitialData;
   types: string[];
+  generation: string | null;
   initialTypeData: PokemonType[];
+  initialGenerationData?: Generation;
 }
 
-export function PokemonListClient({ initialData, types, initialTypeData = [] }: Props) {
+function getFilterHeading(types: string[], generation: string | null): string {
+  if (types.length === 1 && !generation) return "Pokémon with this type";
+  if (types.length > 1 && !generation) return "Pokémon matching all selected types";
+  if (types.length === 0 && generation) return `Pokémon from ${formatGenerationLabel(generation)}`;
+  return "Pokémon matching filters";
+}
+
+export function PokemonListClient({
+  initialData,
+  types,
+  generation,
+  initialTypeData = [],
+  initialGenerationData,
+}: Props) {
   const [page, setPage] = useState(1);
+  const isFiltered = types.length > 0 || !!generation;
 
   const {
     data: list,
@@ -26,7 +44,7 @@ export function PokemonListClient({ initialData, types, initialTypeData = [] }: 
     error: listErr,
   } = usePokemonListQuery({
     page,
-    enabled: types.length === 0,
+    enabled: !isFiltered,
     initialData,
   });
 
@@ -37,16 +55,37 @@ export function PokemonListClient({ initialData, types, initialTypeData = [] }: 
     error: typeErr,
   } = useTypesMultiQuery(types, initialTypeData);
 
-  const isLoading = types.length > 0 ? typeLoading : listLoading;
-  const isError = types.length > 0 ? typeError : listError;
-  const error = types.length > 0 ? typeErr : listErr;
+  const {
+    data: generationData,
+    isLoading: generationLoading,
+    isError: generationError,
+    error: generationErr,
+  } = useGenerationQuery(generation, initialGenerationData);
 
-  const filteredPokemon =
-    types.length > 0 && typeDataList ? intersectPokemon(typeDataList) : null;
+  const isLoading =
+    (types.length > 0 && typeLoading) ||
+    (!!generation && generationLoading) ||
+    (!isFiltered && listLoading);
+
+  const isError =
+    (types.length > 0 && typeError) ||
+    (!!generation && generationError) ||
+    (!isFiltered && listError);
+
+  const error = typeErr ?? generationErr ?? listErr;
+
+  let filteredPokemon: NamedResource[] | null = null;
+
+  if (types.length > 0 && typeDataList) {
+    filteredPokemon = intersectPokemon(typeDataList);
+    if (generation && generationData) {
+      filteredPokemon = filterByGeneration(filteredPokemon, generationData.pokemon_species);
+    }
+  } else if (generation && generationData) {
+    filteredPokemon = generationData.pokemon_species;
+  }
 
   const totalPages = list ? Math.ceil(list.count / PAGE_SIZE) : 1;
-
-  const singleTypeData = types.length === 1 ? typeDataList?.[0] : undefined;
 
   return (
     <>
@@ -55,50 +94,35 @@ export function PokemonListClient({ initialData, types, initialTypeData = [] }: 
         <ErrorState message={error instanceof Error ? error.message : undefined} />
       )}
 
-      {types.length === 1 && singleTypeData && (
-        <div className="flex flex-col gap-6">
-          <section>
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
-              Pokémon with this type
-            </h3>
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {(filteredPokemon ?? []).slice(0, 60).map((p) => (
-                <li key={p.name}>
-                  <CharacterCard id={getIdFromUrl(p.url)} name={p.name} types={types} />
-                </li>
-              ))}
-            </ul>
-            {(filteredPokemon?.length ?? 0) > 60 && (
-              <p className="mt-4 text-sm text-muted-foreground text-center">
-                + {(filteredPokemon?.length ?? 0) - 60} more Pokémon
-              </p>
-            )}
-          </section>
-        </div>
-      )}
-
-      {types.length > 1 && filteredPokemon !== null && !typeLoading && (
+      {isFiltered && filteredPokemon !== null && !isLoading && (
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
-            Pokémon matching all selected types
+            {getFilterHeading(types, generation)}
           </h3>
           {filteredPokemon.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No Pokémon have all of these types simultaneously.
+              No Pokémon match the selected filters.
             </p>
           ) : (
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {filteredPokemon.slice(0, 60).map((p) => (
-                <li key={p.name}>
-                  <CharacterCard id={getIdFromUrl(p.url)} name={p.name} types={types} />
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                {filteredPokemon.slice(0, 60).map((p) => (
+                  <li key={p.name}>
+                    <CharacterCard id={getIdFromUrl(p.url)} name={p.name} types={types} />
+                  </li>
+                ))}
+              </ul>
+              {filteredPokemon.length > 60 && (
+                <p className="mt-4 text-sm text-muted-foreground text-center">
+                  + {filteredPokemon.length - 60} more Pokémon
+                </p>
+              )}
+            </>
           )}
         </section>
       )}
 
-      {types.length === 0 && list && (
+      {!isFiltered && list && !listLoading && (
         <>
           <h3 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
             All Pokémon
