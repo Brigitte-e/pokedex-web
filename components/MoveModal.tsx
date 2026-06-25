@@ -19,7 +19,7 @@ interface MoveModalProps {
 }
 
 export function MoveModal({ moveName, onClose }: MoveModalProps) {
-  const { data } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ["move", moveName],
     queryFn: () => fetchMove(moveName),
   });
@@ -30,6 +30,18 @@ export function MoveModal({ moveName, onClose }: MoveModalProps) {
        data.effect_entries[0]?.short_effect ??
        t("common.noDescription"))
     : undefined;
+
+  if (isError) {
+    return (
+      <Dialog open onOpenChange={(open) => !open && onClose()}>
+        <DialogContent>
+          <p className="py-6 text-center text-sm text-destructive">
+            {t("common.errorDefault")}
+          </p>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>

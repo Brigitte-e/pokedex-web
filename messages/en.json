@@ -5,6 +5,7 @@
   },
   "nav": {
     "logo": "PokéDex",
+    "ariaLabel": "Main navigation",
     "pokemon": "Pokémon",
     "types": "Types",
     "moves": "Moves",
@@ -38,7 +39,8 @@
     "searchPlaceholder": "Search types…",
     "noTypesFound": "No types found",
     "scrollForMore": "Scroll for more…",
-    "removeType": "Remove {name}"
+    "removeType": "Remove {name}",
+    "clearSearch": "Clear search"
   },
   "generationFilter": {
     "filterByGeneration": "Filter by generation",

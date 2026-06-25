@@ -18,10 +18,17 @@ export function getFavorites(): FavoriteEntry[] {
 }
 
 export function saveFavorites(favs: FavoriteEntry[]) {
-  localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favs));
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favs));
+  } catch {
+    // storage quota exceeded or access denied — silently ignore
+  }
 }
 
 export function useFavorites() {
+  // getFavorites is the lazy initializer: it runs once on the client and returns
+  // [] on the server (typeof window guard), so SSR and initial client HTML match.
   const [favorites, setFavorites] = useState<FavoriteEntry[]>(getFavorites);
 
   function toggle(entry: FavoriteEntry) {

@@ -9,9 +9,15 @@ interface Props {
 }
 
 export function TypeFilter({ selected, onChange }: Props) {
-  const { data: types = [] } = useTypeListQuery();
+  const { data: types = [], isError } = useTypeListQuery();
 
+  // On error keep the control mounted so the user can still clear active filters.
+  // Pass an empty list — TypeMultiSelect shows "No types found" but stays interactive.
   return (
-    <TypeMultiSelect types={types} selected={selected} onChange={onChange} />
+    <TypeMultiSelect
+      types={isError ? [] : types}
+      selected={isError ? [] : selected}
+      onChange={isError ? () => {} : onChange}
+    />
   );
 }

@@ -16,11 +16,11 @@ export function Nav() {
           href="/pokemon"
           className="flex items-center gap-2 text-xl font-bold text-pk-yellow shrink-0"
         >
-          <span className="text-2xl">⚡</span>
+          <span className="text-2xl" aria-hidden="true">⚡</span>
           {t("nav.logo")}
         </Link>
 
-        <nav className="flex items-center gap-1 overflow-x-auto">
+        <nav aria-label={t("nav.ariaLabel")} className="flex items-center gap-1 overflow-x-auto">
           {NAV_LINKS.map(({ href, labelKey }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (

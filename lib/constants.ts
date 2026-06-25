@@ -1,5 +1,15 @@
-export const POKE_API_BASE_URL = process.env.NEXT_PUBLIC_POKE_API_URL;
-export const POKE_SPRITES_BASE_URL = process.env.NEXT_PUBLIC_POKE_SPRITES_URL;
+// Validate at server/build time only; on the client these vars are inlined by webpack.
+if (typeof window === "undefined") {
+  if (!process.env.NEXT_PUBLIC_POKE_API_URL) {
+    throw new Error("Missing required env var: NEXT_PUBLIC_POKE_API_URL");
+  }
+  if (!process.env.NEXT_PUBLIC_POKE_SPRITES_URL) {
+    throw new Error("Missing required env var: NEXT_PUBLIC_POKE_SPRITES_URL");
+  }
+}
+
+export const POKE_API_BASE_URL = process.env.NEXT_PUBLIC_POKE_API_URL as string;
+export const POKE_SPRITES_BASE_URL = process.env.NEXT_PUBLIC_POKE_SPRITES_URL as string;
 export const API_REVALIDATE_SECONDS = 3600;
 
 export const POKEMON_LIST_PAGE_SIZE = 24;

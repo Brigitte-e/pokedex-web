@@ -11,7 +11,9 @@ export function useGenerationListQuery() {
     staleTime: 10 * 60 * 1000,
     select: (data) =>
       [...data.results].sort(
-        (a, b) => parseInt(a.url.split("/").at(-2)!) - parseInt(b.url.split("/").at(-2)!),
+        (a, b) =>
+          parseInt(a.url.split("/").at(-2) ?? "0", 10) -
+          parseInt(b.url.split("/").at(-2) ?? "0", 10),
       ),
   });
 }

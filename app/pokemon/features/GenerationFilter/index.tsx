@@ -9,9 +9,15 @@ interface Props {
 }
 
 export function GenerationFilter({ selected, onChange }: Props) {
-  const { data: generations = [] } = useGenerationListQuery();
+  const { data: generations = [], isError } = useGenerationListQuery();
 
+  // On error keep the control mounted so the user can still clear an active filter.
+  // Pass an empty list — GenerationSelect renders just the "All generations" option.
   return (
-    <GenerationSelect generations={generations} selected={selected} onChange={onChange} />
+    <GenerationSelect
+      generations={isError ? [] : generations}
+      selected={isError ? null : selected}
+      onChange={isError ? () => {} : onChange}
+    />
   );
 }

@@ -114,7 +114,7 @@ export function PokemonListClient({
         <ErrorState message={error instanceof Error ? error.message : undefined} />
       )}
 
-      {isFiltered && filteredPokemon !== null && !isLoading && (
+      {isFiltered && filteredPokemon !== null && !isLoading && !isError && (
         <section>
           <h3 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
             {getFilterHeading(types, generation)}
@@ -154,7 +154,7 @@ export function PokemonListClient({
         </section>
       )}
 
-      {!isFiltered && list && !listLoading && (
+      {!isFiltered && list && !listLoading && !listError && (
         <>
           <h3 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-4">
             {t("pokemonList.all")}
