@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     "cypress/**",
     "cypress.config.ts",
     'storybook-static/**',
+    // Claude Code skills are external tooling, not project code
+    '.claude/**',
   ]),
 ]);
 
