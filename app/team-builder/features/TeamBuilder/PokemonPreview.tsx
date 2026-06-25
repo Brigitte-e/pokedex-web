@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { DEFAULT_TYPE_COLOR, TYPE_COLORS } from "@/lib/constants";
 import { fetchPokemon, capitalize, getPokemonSprite } from "@/lib/pokeapi";
@@ -37,7 +38,7 @@ export function PokemonPreview({ name, onRemove }: Props) {
       {isError && <span className="text-xs text-destructive">{t("teamBuilder.notFound")}</span>}
       {data && (
         <>
-          <img src={sprite ?? undefined} alt={name} className="h-20 w-20 object-contain drop-shadow" />
+          <Image src={sprite ?? getPokemonSprite(name)} alt={name} width={80} height={80} className="object-contain drop-shadow" />
           <span className="text-sm font-semibold">{capitalize(data.name)}</span>
           <div className="flex gap-1">
             {data.types.map(({ type }) => (

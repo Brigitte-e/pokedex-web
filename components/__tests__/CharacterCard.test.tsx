@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { CharacterCard } from "../CharacterCard";
 
 jest.mock("@/components/LazyImage", () => ({
+  // eslint-disable-next-line @next/next/no-img-element
   LazyImage: ({ src, alt }: { src: string; alt: string }) => (
     <img src={src} alt={alt} />
   ),
