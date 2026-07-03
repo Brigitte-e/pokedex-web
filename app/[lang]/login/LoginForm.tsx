@@ -9,6 +9,7 @@ import { Eye, EyeOff } from "lucide-react";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
@@ -29,6 +30,12 @@ export interface AuthLabels {
   continueWithGoogle: string;
   noAccount: string;
   alreadyHaveAccount: string;
+  forgotPassword: string;
+  forgotPasswordTitle: string;
+  forgotPasswordDescription: string;
+  sendResetLink: string;
+  resetLinkSent: string;
+  backToSignIn: string;
   pleaseWait: string;
   errors: {
     invalidCredential: string;
@@ -65,8 +72,9 @@ interface Props {
 export function LoginForm({ lang, labels }: Props) {
   const router = useRouter();
   const { user, loading: authLoading } = useAuthStore();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
+  const [resetSent, setResetSent] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -98,8 +106,13 @@ export function LoginForm({ lang, labels }: Props) {
       path: ["confirmPassword"],
     });
 
+  const forgotSchema = z.object({
+    email: z.string().email(v.emailRequired),
+  });
+
   type SignInValues = z.infer<typeof signInSchema>;
   type SignUpValues = z.infer<typeof signUpSchema>;
+  type ForgotValues = z.infer<typeof forgotSchema>;
 
   const signInForm = useForm<SignInValues>({
     resolver: zodResolver(signInSchema),
@@ -111,15 +124,24 @@ export function LoginForm({ lang, labels }: Props) {
     defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
+  const forgotForm = useForm<ForgotValues>({
+    resolver: zodResolver(forgotSchema),
+    defaultValues: { email: "" },
+  });
+
   const isSubmitting =
     mode === "signin"
       ? signInForm.formState.isSubmitting
-      : signUpForm.formState.isSubmitting;
+      : mode === "signup"
+        ? signUpForm.formState.isSubmitting
+        : forgotForm.formState.isSubmitting;
 
-  function switchMode(next: "signin" | "signup") {
+  function switchMode(next: "signin" | "signup" | "forgot") {
     setFirebaseError(null);
+    setResetSent(false);
     signInForm.reset();
     signUpForm.reset();
+    forgotForm.reset();
     setShowPassword(false);
     setShowConfirm(false);
     setMode(next);
@@ -153,19 +175,46 @@ export function LoginForm({ lang, labels }: Props) {
     }
   }
 
+  async function onForgotPassword(values: ForgotValues) {
+    setFirebaseError(null);
+    setResetSent(false);
+    try {
+      await sendPasswordResetEmail(getFirebaseAuth(), values.email, {
+        url: `${window.location.origin}/${lang}/login`,
+      });
+      setResetSent(true);
+    } catch (err) {
+      setFirebaseError(getAuthErrorMessage(err, labels.errors));
+    }
+  }
+
+  const title =
+    mode === "signin"
+      ? labels.signInTitle
+      : mode === "signup"
+        ? labels.signUpTitle
+        : labels.forgotPasswordTitle;
+
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
           <h1 className="text-3xl font-bold">PokéDex</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {mode === "signin" ? labels.signInTitle : labels.signUpTitle}
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{title}</p>
+          {mode === "forgot" && (
+            <p className="mt-2 text-sm text-muted-foreground">{labels.forgotPasswordDescription}</p>
+          )}
         </div>
 
         {firebaseError && (
           <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
             {firebaseError}
+          </p>
+        )}
+
+        {resetSent && (
+          <p role="status" className="rounded-md bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
+            {labels.resetLinkSent}
           </p>
         )}
 
@@ -194,6 +243,16 @@ export function LoginForm({ lang, labels }: Props) {
               />
             </Field>
 
+            <div className="text-right">
+              <button
+                type="button"
+                className="text-sm font-medium text-primary hover:underline"
+                onClick={() => switchMode("forgot")}
+              >
+                {labels.forgotPassword}
+              </button>
+            </div>
+
             <button
               type="submit"
               disabled={isSubmitting}
@@ -202,7 +261,7 @@ export function LoginForm({ lang, labels }: Props) {
               {isSubmitting ? labels.pleaseWait : labels.signIn}
             </button>
           </form>
-        ) : (
+        ) : mode === "signup" ? (
           <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4" noValidate>
             <Field label={labels.email} error={signUpForm.formState.errors.email?.message}>
               <input
@@ -248,8 +307,30 @@ export function LoginForm({ lang, labels }: Props) {
               {isSubmitting ? labels.pleaseWait : labels.signUp}
             </button>
           </form>
+        ) : (
+          <form onSubmit={forgotForm.handleSubmit(onForgotPassword)} className="space-y-4" noValidate>
+            <Field label={labels.email} error={forgotForm.formState.errors.email?.message}>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                {...forgotForm.register("email")}
+                className={inputCn(!!forgotForm.formState.errors.email)}
+              />
+            </Field>
+
+            <button
+              type="submit"
+              disabled={isSubmitting || resetSent}
+              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+            >
+              {isSubmitting ? labels.pleaseWait : labels.sendResetLink}
+            </button>
+          </form>
         )}
 
+        {mode !== "forgot" && (
+          <>
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-border" />
@@ -262,7 +343,8 @@ export function LoginForm({ lang, labels }: Props) {
         <button
           type="button"
           onClick={handleGoogle}
-          className="flex w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent disabled:opacity-50"
+          className="flex h-10 w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-[#747775] bg-white px-3 text-sm font-medium leading-5 text-[#1F1F1F] transition-colors hover:bg-[#f8f9fa] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#747775] disabled:cursor-not-allowed disabled:opacity-50"
+          style={{ fontFamily: '"Roboto", "Helvetica Neue", Arial, sans-serif' }}
         >
           <GoogleIcon />
           {labels.continueWithGoogle}
@@ -278,6 +360,20 @@ export function LoginForm({ lang, labels }: Props) {
             {mode === "signin" ? labels.signUp : labels.signIn}
           </button>
         </p>
+          </>
+        )}
+
+        {mode === "forgot" && (
+          <p className="text-center text-sm text-muted-foreground">
+            <button
+              type="button"
+              className="font-medium text-primary hover:underline"
+              onClick={() => switchMode("signin")}
+            >
+              {labels.backToSignIn}
+            </button>
+          </p>
+        )}
       </div>
     </main>
   );
@@ -343,7 +439,7 @@ PasswordInput.displayName = "PasswordInput";
 
 function GoogleIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
       <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
       <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
       <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />

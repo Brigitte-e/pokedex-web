@@ -153,6 +153,12 @@
     "continueWithGoogle": "Continuar con Google",
     "noAccount": "¿No tienes cuenta?",
     "alreadyHaveAccount": "¿Ya tienes cuenta?",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "forgotPasswordTitle": "Restablecer contraseña",
+    "forgotPasswordDescription": "Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+    "sendResetLink": "Enviar enlace",
+    "resetLinkSent": "Revisa tu correo para el enlace de restablecimiento de contraseña.",
+    "backToSignIn": "Volver a iniciar sesión",
     "pleaseWait": "Por favor espera…",
     "errors": {
       "invalidCredential": "Correo o contraseña incorrectos.",

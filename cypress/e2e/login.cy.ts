@@ -63,4 +63,22 @@ describe("Login page", () => {
     cy.wait("@signIn");
     cy.get('[role="alert"]').should("contain", "Incorrect email or password.");
   });
+
+  it("sends a password reset email", () => {
+    cy.intercept("POST", "**/accounts:sendOobCode*", { statusCode: 200, body: {} }).as("reset");
+
+    cy.contains("button", "Forgot password?").click();
+    cy.contains("Reset your password").should("be.visible");
+    cy.get("#email").type("ash@example.com");
+    cy.contains("button", "Send reset link").click();
+
+    cy.wait("@reset");
+    cy.get('[role="status"]').should("contain", "Check your email for a password reset link.");
+  });
+
+  it("returns to sign in from forgot password", () => {
+    cy.contains("button", "Forgot password?").click();
+    cy.contains("button", "Back to sign in").click();
+    cy.contains("Sign in to your account").should("be.visible");
+  });
 });

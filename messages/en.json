@@ -153,6 +153,12 @@
     "continueWithGoogle": "Continue with Google",
     "noAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordTitle": "Reset your password",
+    "forgotPasswordDescription": "Enter your email address and we'll send you a link to reset your password.",
+    "sendResetLink": "Send reset link",
+    "resetLinkSent": "Check your email for a password reset link.",
+    "backToSignIn": "Back to sign in",
     "pleaseWait": "Please wait…",
     "errors": {
       "invalidCredential": "Incorrect email or password.",

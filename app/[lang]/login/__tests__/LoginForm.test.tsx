@@ -5,6 +5,7 @@ import { useAuthStore } from "@/store/auth";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithPopup,
 } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
@@ -13,6 +14,7 @@ import type { User } from "firebase/auth";
 jest.mock("firebase/auth", () => ({
   signInWithEmailAndPassword: jest.fn(),
   createUserWithEmailAndPassword: jest.fn(),
+  sendPasswordResetEmail: jest.fn(),
   signInWithPopup: jest.fn(),
   GoogleAuthProvider: jest.fn(),
 }));
@@ -25,6 +27,7 @@ jest.mock("next/navigation", () => ({
 
 const signInMock = signInWithEmailAndPassword as jest.Mock;
 const signUpMock = createUserWithEmailAndPassword as jest.Mock;
+const resetMock = sendPasswordResetEmail as jest.Mock;
 const popupMock = signInWithPopup as jest.Mock;
 
 const labels: AuthLabels = {
@@ -40,6 +43,12 @@ const labels: AuthLabels = {
   continueWithGoogle: "Continue with Google",
   noAccount: "Don't have an account?",
   alreadyHaveAccount: "Already have an account?",
+  forgotPassword: "Forgot password?",
+  forgotPasswordTitle: "Reset your password",
+  forgotPasswordDescription: "Enter your email address and we'll send you a link to reset your password.",
+  sendResetLink: "Send reset link",
+  resetLinkSent: "Check your email for a password reset link.",
+  backToSignIn: "Back to sign in",
   pleaseWait: "Please wait…",
   errors: {
     invalidCredential: "Incorrect email or password.",
@@ -78,6 +87,10 @@ const getConfirmInput = () => document.getElementById("confirmPassword") as HTML
 
 async function switchToSignUp() {
   await userEvent.click(screen.getByRole("button", { name: "Sign up" }));
+}
+
+async function switchToForgotPassword() {
+  await userEvent.click(screen.getByRole("button", { name: "Forgot password?" }));
 }
 
 describe("LoginForm", () => {
@@ -187,5 +200,51 @@ describe("LoginForm", () => {
     renderForm();
     await userEvent.click(screen.getByRole("button", { name: /Continue with Google/ }));
     expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
+  it("switches to the forgot password form", async () => {
+    renderForm();
+    await switchToForgotPassword();
+    expect(screen.getByText("Reset your password")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send reset link" })).toBeInTheDocument();
+    expect(document.getElementById("password")).toBeNull();
+  });
+
+  it("validates email on forgot password submit", async () => {
+    renderForm();
+    await switchToForgotPassword();
+    await userEvent.click(screen.getByRole("button", { name: "Send reset link" }));
+    expect(await screen.findByText("Enter a valid email address")).toBeInTheDocument();
+    expect(resetMock).not.toHaveBeenCalled();
+  });
+
+  it("sends a password reset email", async () => {
+    resetMock.mockResolvedValue(undefined);
+    renderForm();
+    await switchToForgotPassword();
+    await userEvent.type(screen.getByRole("textbox"), "ash@example.com");
+    await userEvent.click(screen.getByRole("button", { name: "Send reset link" }));
+    expect(resetMock).toHaveBeenCalledWith(expect.anything(), "ash@example.com", {
+      url: "http://localhost/en/login",
+    });
+    expect(await screen.findByRole("status")).toHaveTextContent(
+      "Check your email for a password reset link.",
+    );
+  });
+
+  it("shows an error when password reset fails", async () => {
+    resetMock.mockRejectedValue(new FirebaseError("auth/too-many-requests", "boom"));
+    renderForm();
+    await switchToForgotPassword();
+    await userEvent.type(screen.getByRole("textbox"), "ash@example.com");
+    await userEvent.click(screen.getByRole("button", { name: "Send reset link" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("Too many attempts.");
+  });
+
+  it("returns to sign in from forgot password", async () => {
+    renderForm();
+    await switchToForgotPassword();
+    await userEvent.click(screen.getByRole("button", { name: "Back to sign in" }));
+    expect(screen.getByText("Sign in to your account")).toBeInTheDocument();
   });
 });
