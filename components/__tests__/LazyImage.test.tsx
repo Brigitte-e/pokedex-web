@@ -6,9 +6,11 @@ jest.mock("next/image", () => {
   const MockImage = React.forwardRef<
     HTMLImageElement,
     React.ImgHTMLAttributes<HTMLImageElement> & { fetchPriority?: string }
-  >(function MockImage({ fetchPriority: _fetchPriority, ...props }, ref) {
+  >(function MockImage(props, ref) {
+    const imgProps = { ...props };
+    delete imgProps.fetchPriority;
     // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-    return <img ref={ref} {...props} />;
+    return <img ref={ref} {...imgProps} />;
   });
   return { __esModule: true, default: MockImage };
 });

@@ -19,6 +19,7 @@ const eslintConfig = defineConfig([
     // Claude Code skills are external tooling, not project code
     '.claude/**',
     '.agents/**',
+    'coverage/**',
   ]),
 ]);
 

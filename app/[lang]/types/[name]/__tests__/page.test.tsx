@@ -2,7 +2,6 @@ import { render, screen } from "@testing-library/react";
 import TypeDetailPage from "../page";
 import { fetchType } from "@/lib/api/types";
 import { ApiError } from "@/lib/api/client";
-import { notFound } from "next/navigation";
 
 jest.mock("server-only", () => ({}), { virtual: true });
 jest.mock("@/lib/api/types", () => ({ fetchType: jest.fn() }));
