@@ -77,15 +77,13 @@ export function ItemModal({ itemName, onClose, labels, locale = "en" }: ItemModa
         <DialogHeader>
           {data ? (
             <div className="flex items-start gap-3">
-              {data.sprites.default && (
-                <LazyImage
-                  src={data.sprites.default}
-                  alt={localizedItemName ?? data.name}
-                  width={40}
-                  height={40}
-                  className="object-contain"
-                />
-              )}
+              <LazyImage
+                src={data.sprites.default}
+                alt={localizedItemName ?? data.name}
+                width={40}
+                height={40}
+                className="object-contain"
+              />
               <div>
                 <DialogTitle>{localizedItemName ?? capitalize(data.name)}</DialogTitle>
                 <span className="text-xs text-muted-foreground">

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { LazyImage } from "@/components/LazyImage";
 import { DEFAULT_TYPE_COLOR, TYPE_COLORS } from "@/lib/constants";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { usePokemonOfTheDayStore } from "@/store/pokemon-of-the-day";
@@ -72,11 +72,12 @@ export function PokemonOfTheDayClient({ pokemon, dayKey, labels, locale }: Props
       )}
 
       {revealed ? (
-        <Image
+        <LazyImage
           src={pokemon.sprite}
           alt={pokemon.name}
           width={160}
           height={160}
+          wrapperClassName="h-40 w-40"
           className="object-contain drop-shadow-lg"
           priority
         />

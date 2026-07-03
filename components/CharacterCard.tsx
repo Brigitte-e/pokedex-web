@@ -54,11 +54,14 @@ export function CharacterCard({
           />
         </div>
 
-        <div className="flex flex-col items-center gap-1">
+        <div className="flex w-full min-w-0 flex-col items-center gap-1">
           <span className="text-xs text-muted-foreground tabular-nums">
             #{String(id).padStart(4, "0")}
           </span>
-          <span className="text-sm font-semibold text-foreground group-hover:text-pk-yellow transition-colors duration-300">
+          <span
+            className="max-w-full truncate text-sm font-semibold text-foreground group-hover:text-pk-yellow transition-colors duration-300"
+            title={label}
+          >
             {label}
           </span>
           {types.length > 0 && (

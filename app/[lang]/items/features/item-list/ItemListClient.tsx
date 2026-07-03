@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
-import { capitalize, getItemSprite } from "@/lib/pokeapi";
+import { capitalize } from "@/lib/pokeapi";
 import { getLocalizedName } from "@/lib/locale";
 import { Pagination } from "@/components/pagination";
 import { LoadingState } from "@/components/LoadingState";
@@ -38,17 +38,16 @@ export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: P
 
   const slugs = data?.results.map((i) => i.name) ?? [];
 
-  // Item details are only fetched for localized display names; for the default
-  // locale the capitalized slug suffices and the modal fetches on demand.
+  // Item details provide the real sprite URL (the filename can't be derived
+  // from the slug, e.g. tm01 -> tm-normal.png) and localized display names.
+  // They share the ["item", name] cache with the modal, so opening it is instant.
   const needsLocalization = locale !== DEFAULT_LOCALE;
   const itemQueries = useQueries({
-    queries: needsLocalization
-      ? slugs.map((name) => ({
-          queryKey: ["item", name],
-          queryFn: () => fetchItem(name),
-          staleTime: Infinity,
-        }))
-      : [],
+    queries: slugs.map((name) => ({
+      queryKey: ["item", name],
+      queryFn: () => fetchItem(name),
+      staleTime: Infinity,
+    })),
   });
 
   const totalPages = data ? Math.ceil(data.count / ITEM_LIST_PAGE_SIZE) : 1;
@@ -91,23 +90,34 @@ export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: P
       {data && (
         <>
           <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-            {data.results.map((item, index) => (
-              <li key={item.name}>
-                <button
-                  onClick={() => setOpenItem(item.name)}
-                  className="w-full text-left rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium hover:border-pk-yellow/40 hover:bg-card/80 transition-colors cursor-pointer flex items-center gap-2"
-                >
-                  <LazyImage
-                    src={getItemSprite(item.name)}
-                    alt={item.name}
-                    width={24}
-                    height={24}
-                    className="object-contain"
-                  />
-                  {getDisplayName(item.name, index)}
-                </button>
-              </li>
-            ))}
+            {data.results.map((item, index) => {
+              const itemData = itemQueries[index]?.data;
+              const displayName = getDisplayName(item.name, index);
+              return (
+                <li key={item.name}>
+                  <button
+                    onClick={() => setOpenItem(item.name)}
+                    className="w-full text-left rounded-xl border border-border bg-card px-4 py-3 text-sm font-medium hover:border-pk-yellow/40 hover:bg-card/80 transition-colors cursor-pointer flex items-center gap-2"
+                  >
+                    {itemData ? (
+                      <LazyImage
+                        src={itemData.sprites.default}
+                        alt={item.name}
+                        width={24}
+                        height={24}
+                        wrapperClassName="h-6 w-6"
+                        className="object-contain"
+                      />
+                    ) : (
+                      <span className="h-6 w-6 shrink-0 animate-pulse rounded-full bg-muted" />
+                    )}
+                    <span className="min-w-0 truncate" title={displayName}>
+                      {displayName}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="mt-10 flex justify-center">

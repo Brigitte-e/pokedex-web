@@ -6,10 +6,6 @@ export function getPokemonSprite(nameOrId: string | number): string {
   return `${POKE_SPRITES_BASE_URL}/pokemon/other/official-artwork/${segment}.png`;
 }
 
-export function getItemSprite(name: string): string {
-  return `${POKE_SPRITES_BASE_URL}/items/${name}.png`;
-}
-
 export function getIdFromUrl(url: string): number {
   const parts = url.replace(/\/$/, "").split("/");
   return parseInt(parts[parts.length - 1], 10);

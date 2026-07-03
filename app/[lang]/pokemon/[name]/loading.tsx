@@ -6,7 +6,7 @@ export default function Loading() {
   return (
     <PageContainer>
       <div role="status" aria-label="Loading">
-        <div className="mb-2">
+        <div>
           <Skeleton className="h-5 w-32 rounded-full mb-4" />
           {/* PageHeader renders an empty title h1 on this page; keep its height. */}
           <div className="h-9" />
