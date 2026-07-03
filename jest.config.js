@@ -9,6 +9,7 @@ const config = {
   },
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+    "\\.(css|scss)$": "<rootDir>/test/styleMock.js",
   },
   transform: {
     "^.+\\.(ts|tsx|js|jsx)$": "babel-jest",
@@ -21,6 +22,9 @@ const config = {
   collectCoverageFrom: [
     "app/**/*.{ts,tsx}",
     "components/**/*.{ts,tsx}",
+    "lib/**/*.{ts,tsx}",
+    "hooks/**/*.{ts,tsx}",
+    "store/**/*.{ts,tsx}",
     "!**/*.d.ts",
   ],
 };
