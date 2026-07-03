@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQueries } from "@tanstack/react-query";
 import { capitalize } from "@/lib/pokeapi";
-import { getLocalizedName } from "@/lib/locale";
-import { fetchMove } from "@/app/api/moves";
 import { MoveModal, type MoveModalLabels } from "@/components/MoveModal";
 import type { NamedResource } from "@/types";
 import type { Locale } from "@/lib/constants";
@@ -16,22 +13,10 @@ interface Props {
   locale?: Locale;
 }
 
+// Buttons show the capitalized slug; localized names load in the modal on demand
+// to avoid one request per move (a type can have hundreds of moves).
 export function TypeMoves({ moves, title, moveModalLabels, locale = "en" }: Props) {
   const [openMove, setOpenMove] = useState<string | null>(null);
-
-  const moveQueries = useQueries({
-    queries: moves.map((move) => ({
-      queryKey: ["move", move.name],
-      queryFn: () => fetchMove(move.name),
-      staleTime: Infinity,
-    })),
-  });
-
-  function getDisplayName(slug: string, index: number) {
-    const data = moveQueries[index]?.data;
-    if (data) return getLocalizedName(data.names, locale, capitalize(slug));
-    return capitalize(slug);
-  }
 
   if (moves.length === 0) return null;
 
@@ -50,13 +35,13 @@ export function TypeMoves({ moves, title, moveModalLabels, locale = "en" }: Prop
           {title} <span className="text-muted-foreground font-normal">({moves.length})</span>
         </h2>
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-          {moves.map((move, index) => (
+          {moves.map((move) => (
             <li key={move.name}>
               <button
                 onClick={() => setOpenMove(move.name)}
                 className="w-full text-left rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm font-medium hover:border-pk-yellow/40 hover:bg-card/80 transition-colors cursor-pointer"
               >
-                {getDisplayName(move.name, index)}
+                {capitalize(move.name)}
               </button>
             </li>
           ))}

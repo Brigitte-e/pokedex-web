@@ -13,6 +13,7 @@ export default async function FavoritesPage({ params }: Props) {
   const dict = await getDictionary(lang as Locale);
 
   const favLabels = {
+    loading: t(dict, "common.loading"),
     empty: t(dict, "favorites.empty"),
     savedCountPattern: dict.favorites.savedCount,
     removeLabel: t(dict, "favorites.remove"),

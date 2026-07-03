@@ -1,8 +1,9 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { fetchMoveList, fetchMove } from "@/app/api/moves";
-import { MOVE_LIST_PAGE_SIZE } from "@/lib/constants";
+import { fetchMove } from "@/lib/api/moves";
+import { DEFAULT_LOCALE } from "@/lib/constants";
 import { MoveListClient } from "./MoveListClient";
 import type { MoveModalLabels } from "@/components/MoveModal";
+import type { ListResponse } from "@/types";
 import type { Locale } from "@/lib/constants";
 
 interface ListLabels {
@@ -15,26 +16,28 @@ interface ListLabels {
 }
 
 interface Props {
+  list: ListResponse;
   initialPage: number;
   moveModalLabels: MoveModalLabels;
   listLabels: ListLabels;
   locale?: Locale;
 }
 
-export async function MoveList({ initialPage, moveModalLabels, listLabels, locale = "en" }: Props) {
-  const offset = (initialPage - 1) * MOVE_LIST_PAGE_SIZE;
+export async function MoveList({ list, initialPage, moveModalLabels, listLabels, locale = DEFAULT_LOCALE }: Props) {
   const queryClient = new QueryClient();
-
-  const list = await fetchMoveList(offset, MOVE_LIST_PAGE_SIZE);
   queryClient.setQueryData(["move-list", initialPage], list);
 
-  await Promise.all(
-    list.results.map((m) =>
-      fetchMove(m.name)
-        .then((move) => queryClient.setQueryData(["move", m.name], move))
-        .catch(() => null)
-    )
-  );
+  // Move details are only needed up front for localized display names; for the
+  // default locale the capitalized slug suffices and the modal fetches on demand.
+  if (locale !== DEFAULT_LOCALE) {
+    await Promise.all(
+      list.results.map((m) =>
+        fetchMove(m.name)
+          .then((move) => queryClient.setQueryData(["move", m.name], move))
+          .catch(() => null)
+      )
+    );
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

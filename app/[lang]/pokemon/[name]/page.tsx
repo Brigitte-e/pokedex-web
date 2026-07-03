@@ -1,8 +1,9 @@
-import { fetchPokemon } from "@/app/api/pokemon";
-import { fetchPokemonSpecies } from "@/app/api/species";
-import { fetchAbility } from "@/app/api/abilities";
-import { fetchType } from "@/app/api/types";
-import { ErrorState } from "@/components/ErrorState";
+import { notFound } from "next/navigation";
+import { fetchPokemon } from "@/lib/api/pokemon";
+import { fetchPokemonSpecies } from "@/lib/api/species";
+import { fetchAbility } from "@/lib/api/abilities";
+import { fetchType } from "@/lib/api/types";
+import { isNotFoundError } from "@/lib/api/client";
 import { PageContainer } from "@/components/PageContainer";
 import { PageHeader } from "@/components/PageHeader";
 import { PokemonHero } from "./features/pokemon-hero";
@@ -28,16 +29,8 @@ export default async function PokemonDetailPage({ params }: Props) {
   try {
     pokemon = await fetchPokemon(name);
   } catch (err) {
-    return (
-      <PageContainer>
-        <PageHeader
-          backHref={`/${locale}/pokemon`}
-          backLabel={t(dict, "pokemonDetail.backToPokedex")}
-          title=""
-        />
-        <ErrorState message={err instanceof Error ? err.message : t(dict, "common.errorDefault")} />
-      </PageContainer>
-    );
+    if (isNotFoundError(err)) notFound();
+    throw err;
   }
 
   const [species, ...restResults] = await Promise.allSettled([

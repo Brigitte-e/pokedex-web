@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQueries } from "@tanstack/react-query";
 import { capitalize } from "@/lib/pokeapi";
-import { getLocalizedName } from "@/lib/locale";
-import { fetchMove } from "@/app/api/moves";
 import { Badge } from "@/components/ui/badge";
 import { MoveModal, type MoveModalLabels } from "@/components/MoveModal";
 import type { MoveEntry } from "@/types";
@@ -17,22 +14,10 @@ interface Props {
   locale?: Locale;
 }
 
+// Badges show the capitalized slug; localized names load in the modal on demand
+// to avoid one request per move (a pokemon can have 100+ moves).
 export function PokemonMoves({ moves, title, moveModalLabels, locale = "en" }: Props) {
   const [selectedMove, setSelectedMove] = useState<string | null>(null);
-
-  const moveQueries = useQueries({
-    queries: moves.map(({ move }) => ({
-      queryKey: ["move", move.name],
-      queryFn: () => fetchMove(move.name),
-      staleTime: Infinity,
-    })),
-  });
-
-  function getDisplayName(slug: string, index: number) {
-    const data = moveQueries[index]?.data;
-    if (data) return getLocalizedName(data.names, locale, capitalize(slug));
-    return capitalize(slug);
-  }
 
   return (
     <>
@@ -49,14 +34,14 @@ export function PokemonMoves({ moves, title, moveModalLabels, locale = "en" }: P
           {title}
         </h2>
         <div className="flex flex-wrap gap-2 max-h-50 overflow-y-auto">
-          {moves.map(({ move }, index) => (
+          {moves.map(({ move }) => (
             <button
               key={move.name}
               onClick={() => setSelectedMove(move.name)}
               className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
             >
               <Badge variant="outline" className="cursor-pointer hover:bg-muted transition-colors">
-                {getDisplayName(move.name, index)}
+                {capitalize(move.name)}
               </Badge>
             </button>
           ))}

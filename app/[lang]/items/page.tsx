@@ -4,7 +4,7 @@ import { parsePageParam } from "@/components/pagination/pagination";
 import { getDictionary, t } from "@/lib/i18n";
 import { ITEM_LIST_PAGE_SIZE } from "@/lib/constants";
 import type { Locale } from "@/lib/constants";
-import { fetchItemList } from "@/app/api/items";
+import { fetchItemList } from "@/lib/api/items";
 import { ItemList } from "./features/item-list";
 
 export default async function ItemsPage({
@@ -19,7 +19,7 @@ export default async function ItemsPage({
   const { page } = await searchParams;
   const initialPage = parsePageParam(page);
   const offset = (initialPage - 1) * ITEM_LIST_PAGE_SIZE;
-  const { count } = await fetchItemList(offset, ITEM_LIST_PAGE_SIZE);
+  const list = await fetchItemList(offset, ITEM_LIST_PAGE_SIZE);
 
   const itemModalLabels = {
     cost: t(dict, "itemModal.cost"),
@@ -43,9 +43,10 @@ export default async function ItemsPage({
     <PageContainer>
       <PageHeader
         title={t(dict, "pages.items.title")}
-        subtitle={t(dict, "pages.items.subtitle", { count })}
+        subtitle={t(dict, "pages.items.subtitle", { count: list.count })}
       />
       <ItemList
+        list={list}
         initialPage={initialPage}
         itemModalLabels={itemModalLabels}
         listLabels={listLabels}

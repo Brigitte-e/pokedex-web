@@ -2,7 +2,7 @@
 
 import { ITEM_LIST_PAGE_SIZE } from "@/lib/constants";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { fetchItemList } from "@/app/api/items";
+import { fetchItemList } from "@/lib/api/items";
 
 interface UseItemListQueryOptions {
   page: number;

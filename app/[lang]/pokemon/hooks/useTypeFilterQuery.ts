@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchTypeList, fetchType } from "@/app/api/types";
+import { fetchTypeList, fetchType } from "@/lib/api/types";
 
 export function useTypeListQuery() {
   return useQuery({

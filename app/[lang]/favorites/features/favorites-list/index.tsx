@@ -10,6 +10,7 @@ import { useAuthStore } from "@/store/auth";
 import type { Locale } from "@/lib/constants";
 
 interface FavLabels {
+  loading: string;
   empty: string;
   savedCountPattern: string;
   removeLabel: string;
@@ -40,12 +41,8 @@ export function FavoritesList({ labels, locale }: Props) {
   const names = useMemo(() => favorites.map((f) => f.name), [favorites]);
   const pokemonNames = useLocalizedPokemonNames(names, locale);
 
-  if (authLoading || !isAuthenticated) {
-    return <p className="text-muted-foreground text-sm">Loading…</p>;
-  }
-
-  if (loading) {
-    return <p className="text-muted-foreground text-sm">Loading…</p>;
+  if (authLoading || !isAuthenticated || loading) {
+    return <p className="text-muted-foreground text-sm">{labels.loading}</p>;
   }
 
   if (favorites.length === 0) {
@@ -64,15 +61,14 @@ export function FavoritesList({ labels, locale }: Props) {
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {favorites.map((fav) => {
-          const numId = Number(fav.id);
           return (
             <FavoriteCard
               key={fav.id}
-              id={numId}
+              id={Number(fav.id)}
               name={fav.name}
               displayName={pokemonNames.get(fav.name)}
               locale={locale}
-              onRemove={(id) => remove(String(id))}
+              onRemove={() => remove(fav.id)}
               removeLabel={labels.removeLabel}
               confirmRemove={labels.confirmRemove}
               confirmRemoveCancel={labels.confirmRemoveCancel}

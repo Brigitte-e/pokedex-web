@@ -8,10 +8,10 @@ import { Pagination } from "@/components/pagination";
 import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { MoveModal, type MoveModalLabels } from "@/components/MoveModal";
-import { MOVE_LIST_PAGE_SIZE } from "@/lib/constants";
+import { DEFAULT_LOCALE, MOVE_LIST_PAGE_SIZE } from "@/lib/constants";
 import { usePaginationUrl } from "@/hooks/usePaginationUrl";
 import { useMoveListQuery } from "@/app/[lang]/moves/hooks/useMoveListQuery";
-import { fetchMove } from "@/app/api/moves";
+import { fetchMove } from "@/lib/api/moves";
 import type { Locale } from "@/lib/constants";
 
 interface ListLabels {
@@ -37,12 +37,17 @@ export function MoveListClient({ moveModalLabels, listLabels, locale = "en" }: P
 
   const slugs = data?.results.map((m) => m.name) ?? [];
 
+  // Move details are only fetched for localized display names; for the default
+  // locale the capitalized slug suffices and the modal fetches on demand.
+  const needsLocalization = locale !== DEFAULT_LOCALE;
   const moveQueries = useQueries({
-    queries: slugs.map((name) => ({
-      queryKey: ["move", name],
-      queryFn: () => fetchMove(name),
-      staleTime: Infinity,
-    })),
+    queries: needsLocalization
+      ? slugs.map((name) => ({
+          queryKey: ["move", name],
+          queryFn: () => fetchMove(name),
+          staleTime: Infinity,
+        }))
+      : [],
   });
 
   const totalPages = data ? Math.ceil(data.count / MOVE_LIST_PAGE_SIZE) : 1;
@@ -61,7 +66,7 @@ export function MoveListClient({ moveModalLabels, listLabels, locale = "en" }: P
   );
 
   function getDisplayName(slug: string, index: number) {
-    const moveData = moveQueries[index]?.data;
+    const moveData = needsLocalization ? moveQueries[index]?.data : undefined;
     if (moveData) return getLocalizedName(moveData.names, locale, capitalize(slug));
     return capitalize(slug);
   }

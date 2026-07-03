@@ -1,5 +1,6 @@
-import { fetchType } from "@/app/api/types";
-import { ErrorState } from "@/components/ErrorState";
+import { notFound } from "next/navigation";
+import { fetchType } from "@/lib/api/types";
+import { isNotFoundError } from "@/lib/api/client";
 import { PageContainer } from "@/components/PageContainer";
 import { PageHeader } from "@/components/PageHeader";
 import { TypeHeader } from "./features/type-header";
@@ -24,16 +25,8 @@ export default async function TypeDetailPage({ params }: Props) {
   try {
     type = await fetchType(name);
   } catch (err) {
-    return (
-      <PageContainer>
-        <PageHeader
-          backHref={`/${locale}/types`}
-          backLabel={t(dict, "typeDetail.backToTypes")}
-          title=""
-        />
-        <ErrorState message={err instanceof Error ? err.message : t(dict, "common.errorDefault")} />
-      </PageContainer>
-    );
+    if (isNotFoundError(err)) notFound();
+    throw err;
   }
 
   const localizedTypeName = getLocalizedName(type.names, locale, capitalize(type.name));

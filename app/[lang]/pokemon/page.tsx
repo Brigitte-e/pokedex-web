@@ -1,9 +1,9 @@
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
 import { PageContainer } from "@/components/PageContainer";
 import { parsePageParam } from "@/components/pagination/pagination";
-import { fetchPokemonList } from "@/app/api/pokemon";
-import { fetchType } from "@/app/api/types";
-import { fetchGeneration } from "@/app/api/generations";
+import { fetchPokemonList } from "@/lib/api/pokemon";
+import { fetchType } from "@/lib/api/types";
+import { fetchGeneration } from "@/lib/api/generations";
 import { POKEMON_LIST_PAGE_SIZE } from "@/lib/constants";
 import { getDictionary, t } from "@/lib/i18n";
 import { GENERATION_PREFIX } from "@/lib/constants";

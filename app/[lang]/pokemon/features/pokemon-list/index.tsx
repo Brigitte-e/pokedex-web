@@ -93,30 +93,34 @@ export function PokemonListClient({ types, generation, locale, labels }: Props) 
 
   const error = typeErr ?? generationErr ?? listErr;
 
-  let filteredPokemon: NamedResource[] | null = null;
-
-  if (types.length > 0 && typeDataList) {
-    filteredPokemon = intersectPokemon(typeDataList);
-    if (generation && generationData) {
-      filteredPokemon = filterByGeneration(filteredPokemon, generationData.pokemon_species);
+  const filteredPokemon = useMemo<NamedResource[] | null>(() => {
+    if (types.length > 0 && typeDataList) {
+      const intersected = intersectPokemon(typeDataList);
+      return generation && generationData
+        ? filterByGeneration(intersected, generationData.pokemon_species)
+        : intersected;
     }
-  } else if (generation && generationData) {
-    filteredPokemon = generationData.pokemon_species;
-  }
+    if (generation && generationData) {
+      return generationData.pokemon_species;
+    }
+    return null;
+  }, [types.length, typeDataList, generation, generationData]);
 
   const totalPages = list ? Math.ceil(list.count / POKEMON_LIST_PAGE_SIZE) : 1;
   const filteredTotalPages = filteredPokemon
     ? Math.max(1, Math.ceil(filteredPokemon.length / POKEMON_LIST_PAGE_SIZE))
     : 1;
+  // Render the clamped page immediately; the effect below only syncs the URL.
+  const effectivePage = filteredPokemon ? Math.min(page, filteredTotalPages) : page;
   const paginatedFilteredPokemon = useMemo(
     () =>
       filteredPokemon
         ? filteredPokemon.slice(
-            (page - 1) * POKEMON_LIST_PAGE_SIZE,
-            page * POKEMON_LIST_PAGE_SIZE,
+            (effectivePage - 1) * POKEMON_LIST_PAGE_SIZE,
+            effectivePage * POKEMON_LIST_PAGE_SIZE,
           )
         : [],
-    [filteredPokemon, page],
+    [filteredPokemon, effectivePage],
   );
 
   const visibleNames = useMemo(() => {
@@ -181,7 +185,7 @@ export function PokemonListClient({ types, generation, locale, labels }: Props) 
                       displayName={pokemonNames.get(p.name)}
                       types={types}
                       typeNameMap={typeNames}
-                      fetchPriority={i === 0 && page === 1 ? "high" : undefined}
+                      fetchPriority={i === 0 && effectivePage === 1 ? "high" : undefined}
                       locale={locale}
                     />
                   </li>
@@ -190,12 +194,12 @@ export function PokemonListClient({ types, generation, locale, labels }: Props) 
 
               <div className="mt-10 flex justify-center">
                 <Pagination
-                  page={page}
+                  page={effectivePage}
                   totalPages={filteredTotalPages}
-                  hasPrevious={page > 1}
-                  hasNext={page < filteredTotalPages}
-                  onPrevious={() => setPage(Math.max(1, page - 1))}
-                  onNext={() => setPage(page + 1)}
+                  hasPrevious={effectivePage > 1}
+                  hasNext={effectivePage < filteredTotalPages}
+                  onPrevious={() => setPage(Math.max(1, effectivePage - 1))}
+                  onNext={() => setPage(effectivePage + 1)}
                   onPageChange={setPage}
                   labels={paginationLabels}
                 />

@@ -1,8 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchItem, capitalize } from "@/lib/pokeapi";
-import { fetchItemCategory } from "@/app/api/categories";
+import { capitalize } from "@/lib/pokeapi";
+import { fetchItem } from "@/lib/api/items";
+import { fetchItemCategory } from "@/lib/api/categories";
 import { getLocalizedName, getLocalizedDescription } from "@/lib/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import {

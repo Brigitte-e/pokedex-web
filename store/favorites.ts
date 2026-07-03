@@ -6,9 +6,9 @@ import { FAVORITES_STORAGE_KEY } from "@/lib/constants";
 interface FavoritesState {
   favorites: FavoriteEntry[];
   toggle: (entry: FavoriteEntry) => void;
-  remove: (id: number) => void;
+  remove: (id: string) => void;
   clear: () => void;
-  isFavorite: (id: number) => boolean;
+  isFavorite: (id: string) => boolean;
 }
 
 export const useFavoritesStore = create<FavoritesState>()(
@@ -34,6 +34,16 @@ export const useFavoritesStore = create<FavoritesState>()(
         return get().favorites.some((f) => f.id === id);
       },
     }),
-    { name: FAVORITES_STORAGE_KEY }
+    {
+      name: FAVORITES_STORAGE_KEY,
+      version: 1,
+      // v0 persisted numeric ids; normalize them to strings.
+      migrate: (persisted) => {
+        const state = persisted as { favorites?: { id: number | string; name: string }[] };
+        return {
+          favorites: (state.favorites ?? []).map((f) => ({ ...f, id: String(f.id) })),
+        };
+      },
+    }
   )
 );

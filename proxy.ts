@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { LOCALES, DEFAULT_LOCALE } from "@/lib/constants";
+import { LOCALES, DEFAULT_LOCALE, LOCALE_COOKIE } from "@/lib/constants";
 
 const locales: readonly string[] = LOCALES;
 const defaultLocale = DEFAULT_LOCALE;
 
 function getLocale(request: NextRequest): string {
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
+  if (cookieLocale && locales.includes(cookieLocale)) return cookieLocale;
+
   const acceptLanguage = request.headers.get("accept-language") ?? "";
   for (const part of acceptLanguage.split(",")) {
     const lang = part.split(";")[0].trim().toLowerCase().split("-")[0];
@@ -14,7 +17,7 @@ function getLocale(request: NextRequest): string {
   return defaultLocale;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const pathnameHasLocale = locales.some(
@@ -35,7 +38,8 @@ export function middleware(request: NextRequest) {
 
   const locale = getLocale(request);
   const url = request.nextUrl.clone();
-  url.pathname = `/${locale}${pathname}`;
+  // Send the bare root straight to the pokedex in one hop.
+  url.pathname = pathname === "/" ? `/${locale}/pokemon` : `/${locale}${pathname}`;
   return NextResponse.redirect(url);
 }
 

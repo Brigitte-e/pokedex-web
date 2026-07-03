@@ -9,10 +9,10 @@ import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
 import { ItemModal, type ItemModalLabels } from "@/components/ItemModal";
 import { LazyImage } from "@/components/LazyImage";
-import { ITEM_LIST_PAGE_SIZE } from "@/lib/constants";
+import { DEFAULT_LOCALE, ITEM_LIST_PAGE_SIZE } from "@/lib/constants";
 import { usePaginationUrl } from "@/hooks/usePaginationUrl";
 import { useItemListQuery } from "@/app/[lang]/items/hooks/useItemListQuery";
-import { fetchItem } from "@/app/api/items";
+import { fetchItem } from "@/lib/api/items";
 import type { Locale } from "@/lib/constants";
 
 interface ListLabels {
@@ -38,12 +38,17 @@ export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: P
 
   const slugs = data?.results.map((i) => i.name) ?? [];
 
+  // Item details are only fetched for localized display names; for the default
+  // locale the capitalized slug suffices and the modal fetches on demand.
+  const needsLocalization = locale !== DEFAULT_LOCALE;
   const itemQueries = useQueries({
-    queries: slugs.map((name) => ({
-      queryKey: ["item", name],
-      queryFn: () => fetchItem(name),
-      staleTime: Infinity,
-    })),
+    queries: needsLocalization
+      ? slugs.map((name) => ({
+          queryKey: ["item", name],
+          queryFn: () => fetchItem(name),
+          staleTime: Infinity,
+        }))
+      : [],
   });
 
   const totalPages = data ? Math.ceil(data.count / ITEM_LIST_PAGE_SIZE) : 1;
@@ -62,7 +67,7 @@ export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: P
   );
 
   function getDisplayName(slug: string, index: number) {
-    const itemData = itemQueries[index]?.data;
+    const itemData = needsLocalization ? itemQueries[index]?.data : undefined;
     if (itemData) return getLocalizedName(itemData.names, locale, capitalize(slug));
     return capitalize(slug);
   }

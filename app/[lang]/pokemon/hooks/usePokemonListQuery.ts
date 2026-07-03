@@ -2,7 +2,7 @@
 
 import { POKEMON_LIST_PAGE_SIZE } from "@/lib/constants";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { fetchPokemonList } from "@/app/api/pokemon";
+import { fetchPokemonList } from "@/lib/api/pokemon";
 
 interface UsePokemonListQueryOptions {
   page: number;

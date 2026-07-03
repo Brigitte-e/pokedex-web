@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 import { useAuthStore } from "@/store/auth";
 import { useFavoritesStore } from "@/store/favorites";
 import {
@@ -51,9 +51,10 @@ export function useFavorites(): UseFavoritesResult {
   // null means the subscription hasn't delivered its first snapshot yet
   const firestoreLoading = isAuthenticated && firestoreItems === null;
 
-  const favorites: FavoriteItem[] = isAuthenticated
-    ? (firestoreItems ?? [])
-    : guestFavorites.map((f) => ({ id: String(f.id), name: f.name }));
+  const favorites: FavoriteItem[] = useMemo(
+    () => (isAuthenticated ? (firestoreItems ?? []) : guestFavorites),
+    [isAuthenticated, firestoreItems, guestFavorites],
+  );
 
   const isFavorite = useCallback(
     (id: string) => favorites.some((f) => f.id === id),
@@ -63,8 +64,7 @@ export function useFavorites(): UseFavoritesResult {
   const toggle = useCallback(
     async (item: Omit<FavoriteItem, "createdAt">) => {
       if (!user) {
-        const numId = Number(item.id);
-        if (!Number.isNaN(numId)) guestToggle({ id: numId, name: item.name });
+        guestToggle({ id: item.id, name: item.name });
         return;
       }
       if (isFavorite(item.id)) {
@@ -79,8 +79,7 @@ export function useFavorites(): UseFavoritesResult {
   const remove = useCallback(
     async (id: string) => {
       if (!user) {
-        const numId = Number(id);
-        if (!Number.isNaN(numId)) guestRemove(numId);
+        guestRemove(id);
         return;
       }
       await removeFavorite(user.uid, id);

@@ -2,7 +2,7 @@
 
 import { MOVE_LIST_PAGE_SIZE } from "@/lib/constants";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { fetchMoveList } from "@/app/api/moves";
+import { fetchMoveList } from "@/lib/api/moves";
 
 interface UseMoveListQueryOptions {
   page: number;

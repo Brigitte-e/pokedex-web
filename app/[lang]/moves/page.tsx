@@ -4,7 +4,7 @@ import { parsePageParam } from "@/components/pagination/pagination";
 import { getDictionary, t } from "@/lib/i18n";
 import { MOVE_LIST_PAGE_SIZE } from "@/lib/constants";
 import type { Locale } from "@/lib/constants";
-import { fetchMoveList } from "@/app/api/moves";
+import { fetchMoveList } from "@/lib/api/moves";
 import { MoveList } from "./features/move-list";
 
 export default async function MovesPage({
@@ -19,7 +19,7 @@ export default async function MovesPage({
   const { page } = await searchParams;
   const initialPage = parsePageParam(page);
   const offset = (initialPage - 1) * MOVE_LIST_PAGE_SIZE;
-  const { count } = await fetchMoveList(offset, MOVE_LIST_PAGE_SIZE);
+  const list = await fetchMoveList(offset, MOVE_LIST_PAGE_SIZE);
 
   const moveModalLabels = {
     power: t(dict, "moveModal.power"),
@@ -45,9 +45,10 @@ export default async function MovesPage({
     <PageContainer>
       <PageHeader
         title={t(dict, "pages.moves.title")}
-        subtitle={t(dict, "pages.moves.subtitle", { count })}
+        subtitle={t(dict, "pages.moves.subtitle", { count: list.count })}
       />
       <MoveList
+        list={list}
         initialPage={initialPage}
         moveModalLabels={moveModalLabels}
         listLabels={listLabels}

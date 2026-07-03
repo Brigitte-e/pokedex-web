@@ -12,13 +12,12 @@ type LazyImageProps = Omit<ImageProps, "onLoad" | "onError"> & {
 
 export function LazyImage({ wrapperClassName, skeletonClassName, className, fetchPriority = "auto", ...props }: LazyImageProps) {
   const imgRef = useRef<HTMLImageElement>(null);
-  const skeletonRef = useRef<HTMLSpanElement>(null);
   const [loaded, setLoaded] = useState(false);
 
+  // Cached images may already be complete before onLoad can fire.
   useLayoutEffect(() => {
     const img = imgRef.current;
     if (img && img.complete && img.naturalWidth > 0) {
-      skeletonRef.current?.style.setProperty("display", "none");
       setLoaded(true);
     }
   }, []);
@@ -26,7 +25,6 @@ export function LazyImage({ wrapperClassName, skeletonClassName, className, fetc
   return (
     <span className={cn("relative inline-block shrink-0", wrapperClassName)}>
       <span
-        ref={skeletonRef}
         className={cn(
           "absolute inset-0 rounded-full bg-muted transition-opacity duration-300",
           loaded ? "opacity-0 pointer-events-none" : "opacity-100",
@@ -34,7 +32,6 @@ export function LazyImage({ wrapperClassName, skeletonClassName, className, fetc
         )}
       />
       <Image
-        loading="eager"
         fetchPriority={fetchPriority}
         {...props}
         ref={imgRef as React.Ref<HTMLImageElement>}

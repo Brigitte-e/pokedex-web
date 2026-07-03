@@ -19,6 +19,7 @@ export const TYPE_FILTER_PAGE_SIZE = 10;
 
 export const STAT_MAX = 255;
 export const MAX_TEAM_SIZE = 6;
+export const TOTAL_POKEMON = 1025;
 
 export const FAVORITES_STORAGE_KEY = "pokemon-favorites";
 

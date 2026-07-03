@@ -1,6 +1,6 @@
 /** Minimal shape stored locally (Zustand) and used by UI components. */
 export interface FavoriteEntry {
-  id: number;
+  id: string;
   name: string;
 }
 

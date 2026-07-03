@@ -2,8 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { DEFAULT_TYPE_COLOR, TYPE_COLORS } from "@/lib/constants";
-import { fetchMove, capitalize } from "@/lib/pokeapi";
-import { fetchType } from "@/app/api/types";
+import { capitalize } from "@/lib/pokeapi";
+import { fetchMove } from "@/lib/api/moves";
+import { fetchType } from "@/lib/api/types";
 import { getLocalizedName, getLocalizedDescription } from "@/lib/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import {

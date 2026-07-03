@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchGenerationList, fetchGeneration } from "@/app/api/generations";
+import { fetchGenerationList, fetchGeneration } from "@/lib/api/generations";
 
 export function useGenerationListQuery() {
   return useQuery({

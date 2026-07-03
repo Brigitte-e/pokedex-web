@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { LOCALES } from "@/lib/constants";
+import { setLocaleCookie } from "@/lib/locale-cookie";
 import type { Locale } from "@/lib/constants";
 
 interface LanguageSwitcherProps {
@@ -37,6 +38,7 @@ export function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
   function navigate(lang: Locale) {
     setOpen(false);
     if (lang === locale) return;
+    setLocaleCookie(lang);
     const newPath = pathname.replace(
       new RegExp(`^/${locale}(?=/|$)`),
       `/${lang}`,

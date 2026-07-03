@@ -1,16 +1,5 @@
 import { POKE_SPRITES_BASE_URL } from "@/lib/constants";
 
-export { fetchPokemonList, fetchPokemon } from "@/app/api/pokemon";
-export { fetchTypeList, fetchType } from "@/app/api/types";
-export { fetchMoveList, fetchMove } from "@/app/api/moves";
-export { fetchItemList, fetchItem } from "@/app/api/items";
-export { fetchAbilityList } from "@/app/api/abilities";
-
-export type { NamedResource, ListResponse } from "@/types/common";
-export type { Pokemon, PokemonType, PokemonSprites, StatEntry, TypeSlot, AbilitySlot, MoveEntry } from "@/types/pokemon";
-export type { Move } from "@/types/move";
-export type { Item } from "@/types/item";
-
 export function getPokemonSprite(nameOrId: string | number): string {
   const id = typeof nameOrId === "number" ? nameOrId : parseInt(nameOrId, 10);
   const segment = !isNaN(id) ? id : nameOrId;

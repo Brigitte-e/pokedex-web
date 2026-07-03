@@ -17,7 +17,7 @@ interface FavoriteCardProps {
   name: string;
   displayName?: string;
   locale: Locale;
-  onRemove: (id: number) => void;
+  onRemove: () => void;
   removeLabel?: string;
   confirmRemove?: string;
   confirmRemoveCancel?: string;
@@ -39,7 +39,7 @@ export function FavoriteCard({
 
   function handleConfirm() {
     setOpen(false);
-    onRemove(id);
+    onRemove();
   }
 
   return (

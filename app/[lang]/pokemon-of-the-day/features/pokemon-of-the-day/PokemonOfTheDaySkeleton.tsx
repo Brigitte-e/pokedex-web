@@ -23,7 +23,7 @@ export function PokemonOfTheDayCardSkeleton() {
         <Skeleton className="h-5 w-12 rounded-full" />
         <Skeleton className="h-5 w-10 rounded-full" />
       </div>
-      <Skeleton className="h-9 w-40 rounded-2xl mt-2" />
+      <Skeleton className="h-12 w-40 rounded-2xl mt-2" />
     </div>
   );
 }

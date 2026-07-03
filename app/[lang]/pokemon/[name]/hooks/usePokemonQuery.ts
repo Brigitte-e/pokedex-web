@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchPokemon } from "@/app/api/pokemon";
+import { fetchPokemon } from "@/lib/api/pokemon";
 import type { Pokemon } from "@/types";
 
 interface UsePokemonQueryOptions {

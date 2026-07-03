@@ -182,5 +182,10 @@
   },
   "api": {
     "pokeApiError": "Error de PokeAPI {status}: {path}"
+  },
+  "profile": {
+    "fallbackName": "Entrenador",
+    "signOut": "Cerrar sesión",
+    "signOutError": "No se pudo cerrar la sesión."
   }
 }

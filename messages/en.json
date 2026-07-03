@@ -182,5 +182,10 @@
   },
   "api": {
     "pokeApiError": "PokeAPI error {status}: {path}"
+  },
+  "profile": {
+    "fallbackName": "Trainer",
+    "signOut": "Sign out",
+    "signOutError": "Sign out failed."
   }
 }
