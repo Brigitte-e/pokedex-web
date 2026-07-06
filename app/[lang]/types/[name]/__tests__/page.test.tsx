@@ -11,6 +11,7 @@ const mockNotFound = jest.fn(() => {
 });
 jest.mock("next/navigation", () => ({
   notFound: () => mockNotFound(),
+  useParams: () => ({ lang: "en" }),
 }));
 
 const fetchTypeMock = fetchType as jest.Mock;

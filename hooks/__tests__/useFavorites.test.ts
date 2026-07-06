@@ -25,6 +25,7 @@ let pushSnapshot: (items: FavoriteItem[]) => void;
 describe("useFavorites", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    localStorage.clear();
     useAuthStore.setState({ user: null, loading: false });
     useFavoritesStore.setState({ favorites: [] });
     subscribeMock.mockImplementation((_uid: string, cb: typeof pushSnapshot) => {
@@ -44,7 +45,9 @@ describe("useFavorites", () => {
 
     it("toggles favorites in the local store", async () => {
       const { result } = renderHook(() => useFavorites());
-      await act(() => result.current.toggle({ id: "25", name: "pikachu" }));
+      await act(async () => {
+        await result.current.toggle({ id: "25", name: "pikachu" });
+      });
       expect(useFavoritesStore.getState().favorites).toEqual([{ id: "25", name: "pikachu" }]);
       expect(addFavorite).not.toHaveBeenCalled();
     });
@@ -57,9 +60,13 @@ describe("useFavorites", () => {
         ],
       });
       const { result } = renderHook(() => useFavorites());
-      await act(() => result.current.remove("25"));
+      await act(async () => {
+        await result.current.remove("25");
+      });
       expect(useFavoritesStore.getState().favorites).toEqual([{ id: "1", name: "bulbasaur" }]);
-      await act(() => result.current.clear());
+      await act(async () => {
+        await result.current.clear();
+      });
       expect(useFavoritesStore.getState().favorites).toEqual([]);
     });
   });

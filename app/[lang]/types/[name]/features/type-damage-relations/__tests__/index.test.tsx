@@ -2,6 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { TypeDamageRelations } from "../index";
 import type { PokemonType } from "@/types";
 
+jest.mock("next/navigation", () => ({ useParams: () => ({ lang: "en" }) }));
+
 const type = {
   name: "fire",
   names: [],
@@ -16,22 +18,10 @@ const type = {
   moves: [],
 } as unknown as PokemonType;
 
-const damageRelationLabels = [
-  { key: "double_damage_to", label: "Strong against (2×)" },
-  { key: "half_damage_to", label: "Not very effective (½×)" },
-];
-
 describe("TypeDamageRelations", () => {
-  function renderRelations() {
+  function renderRelations(typeNameMap: Record<string, string> = { grass: "Grass" }) {
     render(
-      <TypeDamageRelations
-        type={type}
-        locale="en"
-        typeNameMap={{ grass: "Grass" }}
-        sectionTitle="Damage Relations"
-        damageRelationLabels={damageRelationLabels}
-        emptyLabel="—"
-      />,
+      <TypeDamageRelations type={type} typeNameMap={typeNameMap} />,
     );
   }
 
@@ -49,20 +39,13 @@ describe("TypeDamageRelations", () => {
 
   it("falls back to the slug when no localized name is mapped", () => {
     render(
-      <TypeDamageRelations
-        type={type}
-        locale="en"
-        typeNameMap={{}}
-        sectionTitle="Damage Relations"
-        damageRelationLabels={[{ key: "double_damage_from", label: "Weak against" }]}
-        emptyLabel="—"
-      />,
+      <TypeDamageRelations type={type} typeNameMap={{}} />,
     );
     expect(screen.getByRole("link", { name: "water" })).toBeInTheDocument();
   });
 
   it("shows the empty label for relations without types", () => {
     renderRelations();
-    expect(screen.getByText("—")).toBeInTheDocument();
+    expect(screen.getAllByText("—").length).toBeGreaterThan(0);
   });
 });

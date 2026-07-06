@@ -2,6 +2,8 @@ import { render, screen } from "@testing-library/react";
 import { PokemonHero } from "../index";
 import type { Pokemon } from "@/types";
 
+jest.mock("next/navigation", () => ({ useParams: () => ({ lang: "en" }) }));
+
 jest.mock("@/components/LazyImage", () => ({
   LazyImage: ({ src, alt }: { src: string; alt: string }) => (
     // eslint-disable-next-line @next/next/no-img-element
@@ -34,26 +36,13 @@ const pokemon = {
   },
 } as unknown as Pokemon;
 
-const labels = {
-  height: "Height",
-  weight: "Weight",
-  baseXp: "Base XP",
-  heightUnit: " m",
-  weightUnit: " kg",
-  empty: "—",
-  addFavorite: "Add to favorites",
-  removeFavorite: "Remove from favorites",
-};
-
 describe("PokemonHero", () => {
   it("renders the localized name and padded number", () => {
     render(
       <PokemonHero
         pokemon={pokemon}
         localizedName="Pikachu"
-        locale="en"
         typeNameMap={{ electric: "Electric" }}
-        labels={labels}
       />,
     );
     expect(screen.getByRole("heading", { name: "Pikachu" })).toBeInTheDocument();
@@ -65,9 +54,7 @@ describe("PokemonHero", () => {
       <PokemonHero
         pokemon={pokemon}
         localizedName="Pikachu"
-        locale="en"
         typeNameMap={{}}
-        labels={labels}
       />,
     );
     expect(screen.getByRole("img", { name: "pikachu" })).toHaveAttribute("src", "/artwork.png");
@@ -78,9 +65,7 @@ describe("PokemonHero", () => {
       <PokemonHero
         pokemon={pokemon}
         localizedName="Pikachu"
-        locale="en"
         typeNameMap={{ electric: "Electric" }}
-        labels={labels}
       />,
     );
     expect(screen.getByRole("link", { name: "Electric" })).toHaveAttribute(
@@ -94,9 +79,7 @@ describe("PokemonHero", () => {
       <PokemonHero
         pokemon={pokemon}
         localizedName="Pikachu"
-        locale="en"
         typeNameMap={{}}
-        labels={labels}
       />,
     );
     expect(screen.getByText("0.4 m")).toBeInTheDocument();
@@ -109,9 +92,7 @@ describe("PokemonHero", () => {
       <PokemonHero
         pokemon={{ ...pokemon, base_experience: null } as unknown as Pokemon}
         localizedName="Pikachu"
-        locale="en"
         typeNameMap={{}}
-        labels={labels}
       />,
     );
     expect(screen.getByText("—")).toBeInTheDocument();

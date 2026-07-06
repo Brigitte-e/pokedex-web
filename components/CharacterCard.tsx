@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils/cn";
 import { DEFAULT_TYPE_COLOR, TYPE_COLORS } from "@/lib/constants";
 import { capitalize, getPokemonSprite } from "@/lib/pokeapi";
 
-export interface PokemonCardProps {
+interface Props {
   id: number;
   name: string;
   displayName?: string;
@@ -16,7 +16,7 @@ export interface PokemonCardProps {
   locale: string;
 }
 
-export function CharacterCard({
+const CharacterCard = ({
   id,
   name,
   displayName,
@@ -25,10 +25,12 @@ export function CharacterCard({
   className,
   fetchPriority,
   locale,
-}: PokemonCardProps) {
+}: Props) => {
   const sprite = getPokemonSprite(id);
+
   const href = `/${locale}/pokemon/${name}`;
   const label = displayName ?? capitalize(name);
+  const showNamePlaceholder = !displayName;
 
   return (
     <Card
@@ -58,12 +60,19 @@ export function CharacterCard({
           <span className="text-xs text-muted-foreground tabular-nums">
             #{String(id).padStart(4, "0")}
           </span>
-          <span
-            className="max-w-full truncate text-sm font-semibold text-foreground group-hover:text-pk-yellow transition-colors duration-300"
-            title={label}
-          >
-            {label}
-          </span>
+          {showNamePlaceholder ? (
+            <span
+              className="h-4 w-20 rounded bg-muted/60 animate-pulse"
+              aria-hidden
+            />
+          ) : (
+            <span
+              className="max-w-full truncate text-sm font-semibold text-foreground group-hover:text-pk-yellow transition-colors duration-300"
+              title={label}
+            >
+              {label}
+            </span>
+          )}
           {types.length > 0 && (
             <div className="flex gap-1 mt-1">
               {types.map((t) => (
@@ -81,4 +90,6 @@ export function CharacterCard({
       </Link>
     </Card>
   );
-}
+};
+
+export { CharacterCard };

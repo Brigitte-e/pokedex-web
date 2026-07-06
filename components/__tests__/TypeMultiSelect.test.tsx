@@ -1,17 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { TypeMultiSelect, type TypeMultiSelectLabels } from "../TypeMultiSelect";
+import { MultiSelect } from "../MultiSelect";
 
-const labels: TypeMultiSelectLabels = {
-  filterByType: "Filter by type",
-  typesSelectedPattern: "{count} types selected",
-  clearAll: "Clear all",
-  searchPlaceholder: "Search types…",
-  noTypesFound: "No types found",
-  scrollForMore: "Scroll for more…",
-  removeTypePattern: "Remove {name}",
-  clearSearch: "Clear search",
-};
+jest.mock("next/navigation", () => ({
+  useParams: () => ({ lang: "en" }),
+}));
 
 const types = [
   { name: "fire" },
@@ -21,11 +14,11 @@ const types = [
 ];
 
 function renderSelect(selected: string[] = [], onChange = jest.fn()) {
-  render(<TypeMultiSelect types={types} selected={selected} onChange={onChange} labels={labels} />);
+  render(<MultiSelect types={types} selected={selected} onChange={onChange} />);
   return onChange;
 }
 
-describe("TypeMultiSelect", () => {
+describe("MultiSelect", () => {
   it("shows the placeholder when nothing is selected", () => {
     renderSelect();
     expect(screen.getByRole("combobox")).toHaveTextContent("Filter by type");
@@ -148,7 +141,7 @@ describe("TypeMultiSelect", () => {
   it("loads more options when scrolling to the bottom", async () => {
     const manyTypes = Array.from({ length: 15 }, (_, i) => ({ name: `type-${i}` }));
     render(
-      <TypeMultiSelect types={manyTypes} selected={[]} onChange={jest.fn()} labels={labels} />,
+      <MultiSelect types={manyTypes} selected={[]} onChange={jest.fn()} />,
     );
     await userEvent.click(screen.getByRole("combobox"));
     expect(screen.getByText("Scroll for more…")).toBeInTheDocument();

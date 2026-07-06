@@ -2,14 +2,11 @@
 
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
+import { useTranslation } from "@/hooks/useTranslation";
 
-interface AuthButtonProps {
-  locale: string;
-  loginLabel: string;
-  profileLabel: string;
-}
-
-export function AuthButton({ locale, loginLabel, profileLabel }: AuthButtonProps) {
+const AuthButton = () => {
+  const { t, locale } = useTranslation();
+  const profileLabel = t("nav.profile");
   const { user, loading } = useAuthStore();
 
   if (loading) {
@@ -53,7 +50,9 @@ export function AuthButton({ locale, loginLabel, profileLabel }: AuthButtonProps
       href={`/${locale}/login`}
       className="rounded-lg px-3 py-1.5 text-sm font-bold whitespace-nowrap transition-colors bg-pk-red text-white hover:opacity-90"
     >
-      {loginLabel}
+      {t("nav.login")}
     </Link>
   );
-}
+};
+
+export { AuthButton };

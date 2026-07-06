@@ -17,8 +17,10 @@ jest.mock("next/link", () => {
 });
 
 describe("CharacterCard", () => {
-  it("renders the Pokémon name", () => {
-    render(<CharacterCard id={25} name="pikachu" locale="en" />);
+  it("renders the localized display name when provided", () => {
+    render(
+      <CharacterCard id={25} name="pikachu" displayName="Pikachu" locale="en" />,
+    );
     expect(screen.getByText("Pikachu")).toBeInTheDocument();
   });
 
@@ -39,8 +41,9 @@ describe("CharacterCard", () => {
     expect(screen.getByRole("link")).toHaveAttribute("href", "/en/pokemon/pikachu");
   });
 
-  it("renders the padded Pokédex number", () => {
-    render(<CharacterCard id={25} name="pikachu" locale="en" />);
-    expect(screen.getByText("#0025")).toBeInTheDocument();
+  it("does not flash an English fallback while localized names are loading", () => {
+    render(<CharacterCard id={25} name="pikachu" locale="de" />);
+    expect(screen.queryByText("Pikachu")).not.toBeInTheDocument();
+    expect(document.querySelector(".animate-pulse")).toBeInTheDocument();
   });
 });

@@ -1,28 +1,36 @@
+"use client";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { ITEM_LIST_PAGE_SIZE, MOVE_LIST_PAGE_SIZE } from "@/lib/constants";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export type LoadingStateVariant = "grid" | "detail" | "type-detail" | "item-list" | "move-list" | "type-grid" | "inline";
 
-interface LoadingStateProps {
+interface Props {
   variant?: LoadingStateVariant;
-  loadingText?: string;
   /** grid only: reserve the type-badge row rendered on filtered cards. */
   showTypeBadges?: boolean;
 }
 
-function PaginationSkeleton() {
+const PaginationSkeleton = () => {
   return (
     <div className="mt-10 flex justify-center">
       <Skeleton className="h-8 w-64 rounded-lg" />
     </div>
   );
+};
+
+interface SectionCardProps {
+  children: React.ReactNode;
 }
 
-function SectionCard({ children }: { children: React.ReactNode }) {
+const SectionCard = ({ children }: SectionCardProps) => {
   return <div className="rounded-2xl border border-border bg-card p-6">{children}</div>;
-}
+};
 
-export function LoadingState({ variant = "inline", loadingText = "Loading…", showTypeBadges = false }: LoadingStateProps) {
+const LoadingState = ({ variant = "inline", showTypeBadges = false }: Props) => {
+  const { t } = useTranslation();
+
   if (variant === "grid") {
     return (
       <div>
@@ -189,6 +197,10 @@ export function LoadingState({ variant = "inline", loadingText = "Loading…", s
   }
 
   return (
-    <p className="text-sm text-muted-foreground animate-pulse">{loadingText}</p>
+    <p className="text-sm text-muted-foreground animate-pulse">
+      {t("common.loading")}
+    </p>
   );
-}
+};
+
+export { LoadingState };

@@ -25,7 +25,8 @@
     "next": "Siguiente →",
     "pageOfTotal": "{page} / {total}",
     "pagination": "Paginación",
-    "noDescription": "Sin descripción disponible."
+    "noDescription": "Sin descripción disponible.",
+    "apply": "Aplicar"
   },
   "favorites": {
     "add": "Añadir a favoritos",
@@ -193,5 +194,13 @@
     "fallbackName": "Entrenador",
     "signOut": "Cerrar sesión",
     "signOutError": "No se pudo cerrar la sesión."
+  },
+  "error": {
+    "title": "Algo salió mal.",
+    "retry": "Intentar de nuevo"
+  },
+  "notFound": {
+    "title": "Página no encontrada.",
+    "home": "Volver a la Pokédex"
   }
 }

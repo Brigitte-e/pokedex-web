@@ -5,31 +5,21 @@ import { ChevronDown, X, Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { DEFAULT_TYPE_COLOR, TYPE_COLORS, TYPE_FILTER_PAGE_SIZE } from "@/lib/constants";
 import { capitalize } from "@/lib/pokeapi";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface TypeOption {
   name: string;
   displayName?: string;
 }
 
-export interface TypeMultiSelectLabels {
-  filterByType: string;
-  typesSelectedPattern: string;
-  clearAll: string;
-  searchPlaceholder: string;
-  noTypesFound: string;
-  scrollForMore: string;
-  removeTypePattern: string;
-  clearSearch: string;
-}
-
-interface TypeMultiSelectProps {
+interface Props {
   types: TypeOption[];
   selected: string[];
   onChange: (selected: string[]) => void;
-  labels: TypeMultiSelectLabels;
 }
 
-export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMultiSelectProps) {
+const MultiSelect = ({ types, selected, onChange }: Props) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [visibleCount, setVisibleCount] = useState(TYPE_FILTER_PAGE_SIZE);
@@ -146,10 +136,10 @@ export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMulti
 
   const label =
     selected.length === 0
-      ? labels.filterByType
+      ? t("typeFilter.filterByType")
       : selected.length === 1
-        ? types.find((t) => t.name === selected[0])?.displayName ?? capitalize(selected[0])
-        : labels.typesSelectedPattern.replace("{count}", String(selected.length));
+        ? types.find((type) => type.name === selected[0])?.displayName ?? capitalize(selected[0])
+        : t("typeFilter.typesSelected", { count: selected.length });
 
   return (
     <div ref={containerRef} className="relative w-64">
@@ -180,14 +170,14 @@ export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMulti
           ) : (
             <span className="flex flex-wrap gap-1">
               {selected.map((name) => {
-                const displayName = types.find((t) => t.name === name)?.displayName ?? name;
+                const displayName = types.find((type) => type.name === name)?.displayName ?? name;
                 return (
                   <TypeBadge
                     key={name}
                     name={name}
                     displayName={displayName}
                     onRemove={() => toggle(name)}
-                    removeLabel={labels.removeTypePattern.replace("{name}", displayName)}
+                    removeLabel={t("typeFilter.removeType", { name: displayName })}
                   />
                 );
               })}
@@ -200,7 +190,7 @@ export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMulti
               type="button"
               onClick={(e) => { e.stopPropagation(); clearAll(); }}
               className="rounded-full p-0.5 text-muted-foreground hover:text-foreground"
-              aria-label={labels.clearAll}
+              aria-label={t("typeFilter.clearAll")}
             >
               <X size={14} />
             </button>
@@ -223,12 +213,12 @@ export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMulti
               ref={searchRef}
               value={search}
               onChange={(e) => updateSearch(e.target.value)}
-              placeholder={labels.searchPlaceholder}
-              aria-label={labels.searchPlaceholder}
+              placeholder={t("typeFilter.searchPlaceholder")}
+              aria-label={t("typeFilter.searchPlaceholder")}
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
             {search && (
-              <button onClick={() => updateSearch("")} className="text-muted-foreground hover:text-foreground" aria-label={labels.clearSearch}>
+              <button onClick={() => updateSearch("")} className="text-muted-foreground hover:text-foreground" aria-label={t("typeFilter.clearSearch")}>
                 <X size={12} />
               </button>
             )}
@@ -245,7 +235,7 @@ export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMulti
             className="max-h-56 overflow-y-auto py-1 outline-none"
           >
             {visible.length === 0 && (
-              <li className="px-3 py-2 text-xs text-muted-foreground">{labels.noTypesFound}</li>
+              <li className="px-3 py-2 text-xs text-muted-foreground">{t("typeFilter.noTypesFound")}</li>
             )}
             {visible.map((type, index) => {
               const isSelected = selectedSet.has(type.name);
@@ -278,7 +268,7 @@ export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMulti
             })}
             {hasMore && (
               <li className="px-3 py-1 text-center text-xs text-muted-foreground">
-                {labels.scrollForMore}
+                {t("typeFilter.scrollForMore")}
               </li>
             )}
           </ul>
@@ -286,19 +276,21 @@ export function TypeMultiSelect({ types, selected, onChange, labels }: TypeMulti
       )}
     </div>
   );
-}
+};
 
-function TypeBadge({
-  name,
-  displayName,
-  onRemove,
-  removeLabel,
-}: {
+interface TypeBadgeProps {
   name: string;
   displayName: string;
   onRemove: () => void;
   removeLabel: string;
-}) {
+}
+
+const TypeBadge = ({
+  name,
+  displayName,
+  onRemove,
+  removeLabel,
+}: TypeBadgeProps) => {
   const color = TYPE_COLORS[name] ?? DEFAULT_TYPE_COLOR;
   return (
     <span
@@ -315,4 +307,6 @@ function TypeBadge({
       </button>
     </span>
   );
-}
+};
+
+export { MultiSelect };

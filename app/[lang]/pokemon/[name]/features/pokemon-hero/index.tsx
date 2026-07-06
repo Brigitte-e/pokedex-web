@@ -1,30 +1,20 @@
+"use client";
+
 import Link from "next/link";
 import { DEFAULT_TYPE_COLOR, TYPE_COLORS } from "@/lib/constants";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { LazyImage } from "@/components/LazyImage";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { Pokemon } from "@/types";
-import type { Locale } from "@/lib/constants";
-
-interface HeroLabels {
-  height: string;
-  weight: string;
-  baseXp: string;
-  heightUnit: string;
-  weightUnit: string;
-  empty: string;
-  addFavorite: string;
-  removeFavorite: string;
-}
 
 interface Props {
   pokemon: Pokemon;
   localizedName: string;
-  locale: Locale;
   typeNameMap: Record<string, string>;
-  labels: HeroLabels;
 }
 
-export function PokemonHero({ pokemon, localizedName, locale, typeNameMap, labels }: Props) {
+const PokemonHero = ({ pokemon, localizedName, typeNameMap }: Props) => {
+  const { t, locale } = useTranslation();
   const sprite =
     pokemon.sprites.other?.["official-artwork"]?.front_default ??
     pokemon.sprites.front_default;
@@ -53,12 +43,7 @@ export function PokemonHero({ pokemon, localizedName, locale, typeNameMap, label
               {localizedName}
             </h1>
           </div>
-          <FavoriteButton
-            id={pokemon.id}
-            name={pokemon.name}
-            addLabel={labels.addFavorite}
-            removeLabel={labels.removeFavorite}
-          />
+          <FavoriteButton id={pokemon.id} name={pokemon.name} />
         </div>
 
         <div className="flex gap-2 flex-wrap">
@@ -76,19 +61,21 @@ export function PokemonHero({ pokemon, localizedName, locale, typeNameMap, label
 
         <div className="grid grid-cols-3 gap-3 mt-1">
           <div className="flex flex-col items-center rounded-xl bg-muted px-3 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{labels.height}</span>
-            <span className="text-sm font-bold">{(pokemon.height / 10).toFixed(1)}{labels.heightUnit}</span>
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{t("pokemonDetail.height")}</span>
+            <span className="text-sm font-bold">{(pokemon.height / 10).toFixed(1)}{t("pokemonDetail.heightUnit")}</span>
           </div>
           <div className="flex flex-col items-center rounded-xl bg-muted px-3 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{labels.weight}</span>
-            <span className="text-sm font-bold">{(pokemon.weight / 10).toFixed(1)}{labels.weightUnit}</span>
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{t("pokemonDetail.weight")}</span>
+            <span className="text-sm font-bold">{(pokemon.weight / 10).toFixed(1)}{t("pokemonDetail.weightUnit")}</span>
           </div>
           <div className="flex flex-col items-center rounded-xl bg-muted px-3 py-2">
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{labels.baseXp}</span>
-            <span className="text-sm font-bold">{pokemon.base_experience ?? labels.empty}</span>
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{t("pokemonDetail.baseXp")}</span>
+            <span className="text-sm font-bold">{pokemon.base_experience ?? t("common.empty")}</span>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export { PokemonHero };

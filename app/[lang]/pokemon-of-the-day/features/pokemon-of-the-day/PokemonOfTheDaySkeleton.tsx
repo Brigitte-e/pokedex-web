@@ -1,15 +1,15 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function PokemonOfTheDaySkeleton() {
+const PokemonOfTheDaySkeleton = () => {
   return (
     <div className="flex flex-col items-center gap-8">
       <Skeleton className="h-12 w-40 rounded-2xl" />
       <Skeleton className="h-4 w-48 rounded-full" />
     </div>
   );
-}
+};
 
-export function PokemonOfTheDayCardSkeleton() {
+const PokemonOfTheDayCardSkeleton = () => {
   return (
     <div className="flex flex-col items-center gap-4 rounded-3xl border border-border bg-card p-8 shadow-md w-full max-w-sm">
       <Skeleton className="h-40 w-40 rounded-2xl" />
@@ -26,4 +26,6 @@ export function PokemonOfTheDayCardSkeleton() {
       <Skeleton className="h-12 w-40 rounded-2xl mt-2" />
     </div>
   );
-}
+};
+
+export { PokemonOfTheDaySkeleton, PokemonOfTheDayCardSkeleton };

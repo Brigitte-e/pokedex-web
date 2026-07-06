@@ -12,15 +12,10 @@ const mockReplace = jest.fn();
 const mockPush = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mockReplace, push: mockPush }),
+  useParams: () => ({ lang: "en" }),
 }));
 
 const signOutMock = signOut as jest.Mock;
-
-const labels = {
-  fallbackName: "Trainer",
-  signOut: "Sign out",
-  signOutError: "Sign out failed.",
-};
 
 const user = {
   displayName: "Ash Ketchum",
@@ -36,19 +31,19 @@ describe("ProfileClient", () => {
 
   it("shows a spinner while auth is loading", () => {
     useAuthStore.setState({ user: null, loading: true });
-    const { container } = render(<ProfileClient lang="en" labels={labels} />);
+    const { container } = render(<ProfileClient lang="en" />);
     expect(container.querySelector(".animate-spin")).toBeInTheDocument();
     expect(mockReplace).not.toHaveBeenCalled();
   });
 
   it("redirects to login when signed out", () => {
     useAuthStore.setState({ user: null, loading: false });
-    render(<ProfileClient lang="en" labels={labels} />);
+    render(<ProfileClient lang="en" />);
     expect(mockReplace).toHaveBeenCalledWith("/en/login");
   });
 
   it("renders the display name, email and initial avatar", () => {
-    render(<ProfileClient lang="en" labels={labels} />);
+    render(<ProfileClient lang="en" />);
     expect(screen.getByRole("heading", { name: "Ash Ketchum" })).toBeInTheDocument();
     expect(screen.getByText("ash@example.com")).toBeInTheDocument();
     expect(screen.getByText("A")).toBeInTheDocument();
@@ -59,7 +54,7 @@ describe("ProfileClient", () => {
       user: { ...user, photoURL: "https://example.com/avatar.png" } as User,
       loading: false,
     });
-    render(<ProfileClient lang="en" labels={labels} />);
+    render(<ProfileClient lang="en" />);
     expect(screen.getByRole("img", { name: "Ash Ketchum" })).toHaveAttribute(
       "src",
       "https://example.com/avatar.png",
@@ -71,13 +66,13 @@ describe("ProfileClient", () => {
       user: { displayName: null, email: null, photoURL: null } as User,
       loading: false,
     });
-    render(<ProfileClient lang="en" labels={labels} />);
+    render(<ProfileClient lang="en" />);
     expect(screen.getByRole("heading", { name: "Trainer" })).toBeInTheDocument();
   });
 
   it("signs out and navigates to the pokedex", async () => {
     signOutMock.mockResolvedValue(undefined);
-    render(<ProfileClient lang="en" labels={labels} />);
+    render(<ProfileClient lang="en" />);
     await userEvent.click(screen.getByRole("button", { name: "Sign out" }));
     expect(signOutMock).toHaveBeenCalled();
     expect(mockPush).toHaveBeenCalledWith("/en/pokemon");
@@ -85,7 +80,7 @@ describe("ProfileClient", () => {
 
   it("shows an error message when sign-out fails", async () => {
     signOutMock.mockRejectedValue(new Error("boom"));
-    render(<ProfileClient lang="en" labels={labels} />);
+    render(<ProfileClient lang="en" />);
     await userEvent.click(screen.getByRole("button", { name: "Sign out" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("Sign out failed.");
   });

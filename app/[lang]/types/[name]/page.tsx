@@ -6,7 +6,6 @@ import { PageHeader } from "@/components/PageHeader";
 import { TypeHeader } from "./features/type-header";
 import { TypeDamageRelations } from "./features/type-damage-relations";
 import { TypeMoves } from "./features/type-moves";
-import { getDictionary, t } from "@/lib/i18n";
 import { getLocalizedName } from "@/lib/locale";
 import { capitalize } from "@/lib/pokeapi";
 import type { Locale } from "@/lib/constants";
@@ -19,7 +18,6 @@ interface Props {
 export default async function TypeDetailPage({ params }: Props) {
   const { lang, name } = await params;
   const locale = lang as Locale;
-  const dict = await getDictionary(locale);
 
   let type;
   try {
@@ -50,45 +48,16 @@ export default async function TypeDetailPage({ params }: Props) {
   );
   typeNameMap[type.name] = localizedTypeName;
 
-  const damageRelationLabels = TYPE_DAMAGE_RELATIONS.map(({ labelKey, key }) => ({
-    key,
-    label: t(dict, labelKey),
-  }));
-
-  const moveModalLabels = {
-    power: t(dict, "moveModal.power"),
-    accuracy: t(dict, "moveModal.accuracy"),
-    pp: t(dict, "moveModal.pp"),
-    noDescription: t(dict, "common.noDescription"),
-    errorDefault: t(dict, "common.errorDefault"),
-    empty: t(dict, "common.empty"),
-    close: t(dict, "common.close"),
-    damageClassNames: dict.damageClass,
-  };
-
   return (
     <PageContainer>
       <PageHeader
         backHref={`/${locale}/types`}
-        backLabel={t(dict, "typeDetail.backToTypes")}
-        title=""
+        backLabelKey="typeDetail.backToTypes"
       />
       <div className="flex flex-col gap-6">
         <TypeHeader name={type.name} localizedName={localizedTypeName} />
-        <TypeDamageRelations
-          type={type}
-          locale={locale}
-          typeNameMap={typeNameMap}
-          sectionTitle={t(dict, "typeDetail.damageRelations")}
-          damageRelationLabels={damageRelationLabels}
-          emptyLabel={t(dict, "common.empty")}
-        />
-        <TypeMoves
-          moves={type.moves}
-          title={t(dict, "typeDetail.moves")}
-          moveModalLabels={moveModalLabels}
-          locale={locale}
-        />
+        <TypeDamageRelations type={type} typeNameMap={typeNameMap} />
+        <TypeMoves moves={type.moves} />
       </div>
     </PageContainer>
   );

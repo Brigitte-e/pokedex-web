@@ -15,5 +15,8 @@ export function useMoveListQuery({ page }: UseMoveListQueryOptions) {
     queryKey: ["move-list", page],
     queryFn: () => fetchMoveList(offset, MOVE_LIST_PAGE_SIZE),
     placeholderData: keepPreviousData,
+    // Keep server-prefetched data fresh so hydration doesn't trigger an
+    // immediate client refetch (TanStack's default staleTime is 0).
+    staleTime: 5 * 60 * 1000,
   });
 }

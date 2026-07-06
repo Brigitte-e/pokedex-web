@@ -6,11 +6,7 @@ import { fetchType } from "@/lib/api/types";
 import { isNotFoundError } from "@/lib/api/client";
 import { PageContainer } from "@/components/PageContainer";
 import { PageHeader } from "@/components/PageHeader";
-import { PokemonHero } from "./features/pokemon-hero";
-import { PokemonStats } from "./features/pokemon-stats";
-import { PokemonAbilities } from "./features/pokemon-abilities";
-import { PokemonMoves } from "./features/pokemon-moves";
-import { getDictionary, t } from "@/lib/i18n";
+import { PokemonDetail } from "./features/pokemon-detail";
 import { getLocalizedName } from "@/lib/locale";
 import { capitalize } from "@/lib/pokeapi";
 import type { Locale } from "@/lib/i18n";
@@ -23,7 +19,6 @@ interface Props {
 export default async function PokemonDetailPage({ params }: Props) {
   const { lang, name } = await params;
   const locale = lang as Locale;
-  const dict = await getDictionary(locale);
 
   let pokemon;
   try {
@@ -72,58 +67,18 @@ export default async function PokemonDetailPage({ params }: Props) {
     return { ability: { ...ability, localizedName }, is_hidden, slot };
   });
 
-  const moveModalLabels = {
-    power: t(dict, "moveModal.power"),
-    accuracy: t(dict, "moveModal.accuracy"),
-    pp: t(dict, "moveModal.pp"),
-    noDescription: t(dict, "common.noDescription"),
-    errorDefault: t(dict, "common.errorDefault"),
-    empty: t(dict, "common.empty"),
-    close: t(dict, "common.close"),
-    damageClassNames: dict.damageClass,
-  };
-
   return (
     <PageContainer>
       <PageHeader
         backHref={`/${locale}/pokemon`}
-        backLabel={t(dict, "pokemonDetail.backToPokedex")}
-        title=""
+        backLabelKey="pokemonDetail.backToPokedex"
       />
-      <div className="flex flex-col gap-6">
-        <PokemonHero
-          pokemon={pokemon}
-          localizedName={localizedPokemonName}
-          locale={locale}
-          typeNameMap={typeNameMap}
-          labels={{
-            height: t(dict, "pokemonDetail.height"),
-            weight: t(dict, "pokemonDetail.weight"),
-            baseXp: t(dict, "pokemonDetail.baseXp"),
-            heightUnit: t(dict, "pokemonDetail.heightUnit"),
-            weightUnit: t(dict, "pokemonDetail.weightUnit"),
-            empty: t(dict, "common.empty"),
-            addFavorite: t(dict, "favorites.add"),
-            removeFavorite: t(dict, "favorites.remove"),
-          }}
-        />
-        <PokemonStats
-          stats={pokemon.stats}
-          title={t(dict, "pokemonDetail.baseStats")}
-          statNames={dict.stats}
-        />
-        <PokemonAbilities
-          abilities={localizedAbilities}
-          title={t(dict, "pokemonDetail.abilities")}
-          hiddenLabel={t(dict, "pokemonDetail.hidden")}
-        />
-        <PokemonMoves
-          moves={pokemon.moves}
-          title={t(dict, "pokemonDetail.moves", { count: pokemon.moves.length })}
-          moveModalLabels={moveModalLabels}
-          locale={locale}
-        />
-      </div>
+      <PokemonDetail
+        pokemon={pokemon}
+        localizedName={localizedPokemonName}
+        localizedAbilities={localizedAbilities}
+        typeNameMap={typeNameMap}
+      />
     </PageContainer>
   );
 }

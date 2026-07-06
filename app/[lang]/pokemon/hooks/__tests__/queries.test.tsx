@@ -1,7 +1,11 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePokemonListQuery } from "../usePokemonListQuery";
-import { useTypeListQuery, useTypesMultiQuery } from "../useTypeFilterQuery";
+import {
+  useTypeListQuery,
+  useTypesMultiQuery,
+  useTypeFilterOptions,
+} from "../useTypeFilterQuery";
 import { useGenerationListQuery, useGenerationQuery } from "../useGenerationFilterQuery";
 import { fetchPokemonList } from "@/lib/api/pokemon";
 import { fetchTypeList, fetchType } from "@/lib/api/types";
@@ -23,18 +27,38 @@ function wrapper({ children }: { children: React.ReactNode }) {
 beforeEach(() => jest.clearAllMocks());
 
 describe("usePokemonListQuery", () => {
-  it("fetches the requested page with the right offset", async () => {
-    (fetchPokemonList as jest.Mock).mockResolvedValue({ count: 1, results: [] });
-    const { result } = renderHook(() => usePokemonListQuery({ page: 3 }), { wrapper });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(fetchPokemonList).toHaveBeenCalledWith(
-      2 * POKEMON_LIST_PAGE_SIZE,
-      POKEMON_LIST_PAGE_SIZE,
+  it("fetches the first page with zero offset", async () => {
+    (fetchPokemonList as jest.Mock).mockResolvedValue({
+      count: 1,
+      results: [],
+      next: null,
+      previous: null,
+    });
+    const { result } = renderHook(
+      () => usePokemonListQuery({ types: [], generation: null, page: 1 }),
+      { wrapper },
     );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(fetchPokemonList).toHaveBeenCalledWith(0, POKEMON_LIST_PAGE_SIZE);
   });
 
-  it("does not fetch when disabled", () => {
-    renderHook(() => usePokemonListQuery({ page: 1, enabled: false }), { wrapper });
+  it("uses initial data without refetching on mount", () => {
+    (fetchPokemonList as jest.Mock).mockResolvedValue({
+      count: 1,
+      results: [{ name: "bulbasaur", url: "" }],
+      next: null,
+      previous: null,
+    });
+    renderHook(
+      () =>
+        usePokemonListQuery({ types: [], generation: null, page: 1 }, {
+          count: 1,
+          results: [{ name: "bulbasaur", url: "" }],
+          next: null,
+          previous: null,
+        }),
+      { wrapper },
+    );
     expect(fetchPokemonList).not.toHaveBeenCalled();
   });
 });
@@ -67,6 +91,36 @@ describe("useTypesMultiQuery", () => {
   it("stays idle without selected types", () => {
     renderHook(() => useTypesMultiQuery([]), { wrapper });
     expect(fetchType).not.toHaveBeenCalled();
+  });
+});
+
+describe("useTypeFilterOptions", () => {
+  it("returns options with localized display names from the type details", async () => {
+    (fetchTypeList as jest.Mock).mockResolvedValue({ results: [{ name: "fire", url: "" }] });
+    (fetchType as jest.Mock).mockResolvedValue({
+      names: [{ name: "Feuer", language: { name: "de", url: "" } }],
+    });
+    const { result } = renderHook(() => useTypeFilterOptions("de"), { wrapper });
+    await waitFor(() =>
+      expect(result.current.options).toEqual([{ name: "fire", displayName: "Feuer" }]),
+    );
+  });
+
+  it("leaves displayName undefined while the type detail is loading", async () => {
+    (fetchTypeList as jest.Mock).mockResolvedValue({ results: [{ name: "fire", url: "" }] });
+    (fetchType as jest.Mock).mockReturnValue(new Promise(() => {}));
+    const { result } = renderHook(() => useTypeFilterOptions("de"), { wrapper });
+    await waitFor(() => expect(result.current.options).toHaveLength(1));
+    expect(result.current.options[0]).toEqual({ name: "fire", displayName: undefined });
+  });
+
+  it("falls back to the capitalized slug when the detail fetch fails", async () => {
+    (fetchTypeList as jest.Mock).mockResolvedValue({ results: [{ name: "fire", url: "" }] });
+    (fetchType as jest.Mock).mockRejectedValue(new Error("boom"));
+    const { result } = renderHook(() => useTypeFilterOptions("de"), { wrapper });
+    await waitFor(() =>
+      expect(result.current.options).toEqual([{ name: "fire", displayName: "Fire" }]),
+    );
   });
 });
 

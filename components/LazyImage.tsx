@@ -4,15 +4,15 @@ import { useLayoutEffect, useRef, useState } from "react";
 import Image, { type ImageProps } from "next/image";
 import { cn } from "@/lib/utils/cn";
 
-type LazyImageProps = Omit<ImageProps, "onLoad" | "onError" | "src"> & {
+interface Props extends Omit<ImageProps, "onLoad" | "onError" | "src"> {
   /** null/undefined renders the placeholder, for entities without an image. */
   src: ImageProps["src"] | null | undefined;
   wrapperClassName?: string;
   skeletonClassName?: string;
   fetchPriority?: "high" | "low" | "auto";
-};
+}
 
-export function LazyImage({ src, wrapperClassName, skeletonClassName, className, fetchPriority = "auto", ...props }: LazyImageProps) {
+const LazyImage = ({ src, wrapperClassName, skeletonClassName, className, fetchPriority = "auto", ...props }: Props) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -67,4 +67,6 @@ export function LazyImage({ src, wrapperClassName, skeletonClassName, className,
       />
     </span>
   );
-}
+};
+
+export { LazyImage };

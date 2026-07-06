@@ -62,7 +62,7 @@ pokedex-web/
 └── stories/                 # Storybook component stories
 ```
 
-Routes are organized by feature. Each page is a Server Component that fetches data and passes translated labels to Client Components for interactivity (filters, modals, forms).
+Routes are organized by feature. Server Components fetch data and pass localized API entity names to Client Components; UI strings are resolved client-side via `useTranslation().t(key)`.
 
 ---
 
@@ -128,13 +128,13 @@ When a user navigates to a route (e.g. `/en/pokemon`):
 
 **Server Components** (default in the App Router)
 - Execute on the server at request time
-- Suitable for data fetching, layout, and loading translations
+- Suitable for data fetching and reading `params.lang` for PokeAPI localization
 - Example: `app/[lang]/pokemon/page.tsx`
 
 **Client Components** (files with `"use client"`)
 - Execute in the browser after hydration
-- Required for interactivity: state, effects, and event handlers
-- Examples: `PokemonListClient`, `LoginForm`, `Nav`
+- Required for interactivity and all UI translations via `useTranslation().t(key)`
+- Examples: `PokemonList`, `LoginForm`, `Nav`
 
 Client Components are used only where interactivity is required; data fetching remains on the server wherever possible.
 

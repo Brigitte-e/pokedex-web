@@ -9,22 +9,15 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+import { useTranslation } from "@/hooks/useTranslation";
 
-interface ClearFavoritesButtonProps {
+interface Props {
   onClear: () => void | Promise<void>;
-  label?: string;
-  confirmText?: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
 }
 
-export function ClearFavoritesButton({
-  onClear,
-  label = "Clear all favorites",
-  confirmText = "Do you really want to remove all pokemon from favorites?",
-  confirmLabel = "Clear all",
-  cancelLabel = "Cancel",
-}: ClearFavoritesButtonProps) {
+const ClearFavoritesButton = ({ onClear }: Props) => {
+  const { t } = useTranslation();
+  const label = t("favorites.clearAll");
   const [open, setOpen] = useState(false);
 
   function handleConfirm() {
@@ -42,26 +35,28 @@ export function ClearFavoritesButton({
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent closeLabel={cancelLabel}>
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{label}</DialogTitle>
-            <DialogDescription>{confirmText}</DialogDescription>
+            <DialogDescription>{t("favorites.confirmClearAll")}</DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-3 mt-4">
             <DialogClose asChild>
               <button className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-muted transition-colors">
-                {cancelLabel}
+                {t("favorites.confirmRemoveCancel")}
               </button>
             </DialogClose>
             <button
               onClick={handleConfirm}
               className="rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 transition-colors"
             >
-              {confirmLabel}
+              {t("favorites.confirmClearAllConfirm")}
             </button>
           </div>
         </DialogContent>
       </Dialog>
     </>
   );
-}
+};
+
+export { ClearFavoritesButton };

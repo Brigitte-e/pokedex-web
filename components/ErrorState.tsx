@@ -1,8 +1,8 @@
-export interface ErrorStateProps {
+interface Props {
   message?: string;
 }
 
-export function ErrorState({ message = "Something went wrong" }: ErrorStateProps) {
+const ErrorState = ({ message = "Something went wrong" }: Props) => {
   return (
     <div
       role="alert"
@@ -12,4 +12,6 @@ export function ErrorState({ message = "Something went wrong" }: ErrorStateProps
       {message}
     </div>
   );
-}
+};
+
+export { ErrorState };

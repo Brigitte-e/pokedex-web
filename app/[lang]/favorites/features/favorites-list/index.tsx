@@ -7,27 +7,10 @@ import { ClearFavoritesButton } from "@/components/ClearFavoritesButton";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLocalizedPokemonNames } from "@/hooks/useLocalizedPokemonNames";
 import { useAuthStore } from "@/store/auth";
-import type { Locale } from "@/lib/constants";
+import { useTranslation } from "@/hooks/useTranslation";
 
-interface FavLabels {
-  loading: string;
-  empty: string;
-  savedCountPattern: string;
-  removeLabel: string;
-  clearAll: string;
-  confirmRemove: string;
-  confirmRemoveCancel: string;
-  confirmRemoveConfirm: string;
-  confirmClearAll: string;
-  confirmClearAllConfirm: string;
-}
-
-interface Props {
-  labels: FavLabels;
-  locale: Locale;
-}
-
-export function FavoritesList({ labels, locale }: Props) {
+const FavoritesList = () => {
+  const { locale, t } = useTranslation();
   const { favorites, remove, clear, isAuthenticated, loading } = useFavorites();
   const authLoading = useAuthStore((s) => s.loading);
   const router = useRouter();
@@ -42,13 +25,13 @@ export function FavoritesList({ labels, locale }: Props) {
   const pokemonNames = useLocalizedPokemonNames(names, locale);
 
   if (authLoading || !isAuthenticated || loading) {
-    return <p className="text-muted-foreground text-sm">{labels.loading}</p>;
+    return <p className="text-muted-foreground text-sm">{t("common.loading")}</p>;
   }
 
   if (favorites.length === 0) {
     return (
       <p className="text-muted-foreground text-sm">
-        {labels.empty}
+        {t("favorites.empty")}
       </p>
     );
   }
@@ -56,7 +39,7 @@ export function FavoritesList({ labels, locale }: Props) {
   return (
     <>
       <p className="text-muted-foreground mb-8 text-sm">
-        {labels.savedCountPattern.replace("{count}", String(favorites.length))}
+        {t("favorites.savedCount", { count: favorites.length })}
       </p>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -67,24 +50,15 @@ export function FavoritesList({ labels, locale }: Props) {
               id={Number(fav.id)}
               name={fav.name}
               displayName={pokemonNames.get(fav.name)}
-              locale={locale}
               onRemove={() => remove(fav.id)}
-              removeLabel={labels.removeLabel}
-              confirmRemove={labels.confirmRemove}
-              confirmRemoveCancel={labels.confirmRemoveCancel}
-              confirmRemoveConfirm={labels.confirmRemoveConfirm}
             />
           );
         })}
       </div>
 
-      <ClearFavoritesButton
-        onClear={clear}
-        label={labels.clearAll}
-        confirmText={labels.confirmClearAll}
-        confirmLabel={labels.confirmClearAllConfirm}
-        cancelLabel={labels.confirmRemoveCancel}
-      />
+      <ClearFavoritesButton onClear={clear} />
     </>
   );
-}
+};
+
+export { FavoritesList };

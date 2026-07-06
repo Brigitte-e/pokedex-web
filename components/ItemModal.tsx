@@ -14,25 +14,15 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { LazyImage } from "./LazyImage";
-import type { Locale } from "@/lib/constants";
+import { useTranslation } from "@/hooks/useTranslation";
 
-export interface ItemModalLabels {
-  cost: string;
-  category: string;
-  noDescription: string;
-  errorDefault: string;
-  empty: string;
-  close: string;
-}
-
-interface ItemModalProps {
+interface Props {
   itemName: string;
   onClose: () => void;
-  labels: ItemModalLabels;
-  locale?: Locale;
 }
 
-export function ItemModal({ itemName, onClose, labels, locale = "en" }: ItemModalProps) {
+const ItemModal = ({ itemName, onClose }: Props) => {
+  const { t, locale } = useTranslation();
   const { data, isError } = useQuery({
     queryKey: ["item", itemName],
     queryFn: () => fetchItem(itemName),
@@ -56,15 +46,15 @@ export function ItemModal({ itemName, onClose, labels, locale = "en" }: ItemModa
       : undefined;
   const description = data
     ? (getLocalizedDescription(data.effect_entries, data.flavor_text_entries, locale) ??
-      labels.noDescription)
+      t("common.noDescription"))
     : undefined;
 
   if (isError) {
     return (
       <Dialog open onOpenChange={(open) => !open && onClose()}>
-        <DialogContent closeLabel={labels.close}>
+        <DialogContent>
           <p className="py-6 text-center text-sm text-destructive">
-            {labels.errorDefault}
+            {t("common.errorDefault")}
           </p>
         </DialogContent>
       </Dialog>
@@ -73,7 +63,7 @@ export function ItemModal({ itemName, onClose, labels, locale = "en" }: ItemModa
 
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent closeLabel={labels.close}>
+      <DialogContent>
         <DialogHeader>
           {data ? (
             <div className="flex items-start gap-3">
@@ -117,8 +107,8 @@ export function ItemModal({ itemName, onClose, labels, locale = "en" }: ItemModa
           {data ? (
             <>
               {[
-                { label: labels.cost, value: data.cost > 0 ? `₽${data.cost.toLocaleString()}` : labels.empty },
-                { label: labels.category, value: localizedCategoryName ?? labels.empty },
+                { label: t("itemModal.cost"), value: data.cost > 0 ? `₽${data.cost.toLocaleString()}` : t("common.empty") },
+                { label: t("itemModal.category"), value: localizedCategoryName ?? t("common.empty") },
               ].map(({ label, value }) => (
                 <div key={label} className="rounded-xl bg-muted/50 px-3 py-2 text-center">
                   <div className="text-xs text-muted-foreground mb-1">{label}</div>
@@ -136,4 +126,6 @@ export function ItemModal({ itemName, onClose, labels, locale = "en" }: ItemModa
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export { ItemModal };

@@ -29,27 +29,13 @@ export default async function LangLayout({ children, params }: Props) {
   if (!(LOCALES as readonly string[]).includes(lang)) notFound();
 
   const locale = lang as Locale;
-  const dict = await getDictionary(locale);
-
-  const navLabels = {
-    logo: dict.nav.logo,
-    ariaLabel: dict.nav.ariaLabel,
-    pokemon: dict.nav.pokemon,
-    types: dict.nav.types,
-    moves: dict.nav.moves,
-    items: dict.nav.items,
-    pokemonOfTheDay: dict.nav.pokemonOfTheDay,
-    favorites: dict.nav.favorites,
-    login: dict.nav.login,
-    profile: dict.nav.profile,
-  };
 
   return (
     <html lang={locale} className="h-full antialiased">
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <AuthProvider>
           <QueryProvider>
-            <Nav locale={locale} labels={navLabels} />
+            <Nav />
             <div className="flex-1">{children}</div>
           </QueryProvider>
         </AuthProvider>

@@ -29,7 +29,6 @@ export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 
 export const DEFAULT_TYPE_COLOR = "#888";
-export const GENERATION_PREFIX = "generation-";
 
 export const NAV_LINKS = [
   { href: "/pokemon", labelKey: "nav.pokemon" },

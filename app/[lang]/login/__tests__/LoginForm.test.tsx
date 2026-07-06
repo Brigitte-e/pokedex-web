@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { LoginForm, type AuthLabels } from "../LoginForm";
+import { LoginForm } from "../LoginForm";
 import { useAuthStore } from "@/store/auth";
 import {
   signInWithEmailAndPassword,
@@ -23,6 +23,7 @@ jest.mock("@/lib/firebase", () => ({ getFirebaseAuth: jest.fn(() => ({})) }));
 const mockReplace = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mockReplace }),
+  useParams: () => ({ lang: "en" }),
 }));
 
 const signInMock = signInWithEmailAndPassword as jest.Mock;
@@ -30,55 +31,8 @@ const signUpMock = createUserWithEmailAndPassword as jest.Mock;
 const resetMock = sendPasswordResetEmail as jest.Mock;
 const popupMock = signInWithPopup as jest.Mock;
 
-const labels: AuthLabels = {
-  signIn: "Sign in",
-  signUp: "Sign up",
-  signInTitle: "Sign in to your account",
-  signUpTitle: "Create an account",
-  email: "Email",
-  password: "Password",
-  confirmPassword: "Confirm password",
-  showPassword: "Show password",
-  hidePassword: "Hide password",
-  continueWithGoogle: "Continue with Google",
-  noAccount: "Don't have an account?",
-  alreadyHaveAccount: "Already have an account?",
-  forgotPassword: "Forgot password?",
-  forgotPasswordTitle: "Reset your password",
-  forgotPasswordDescription: "Enter your email address and we'll send you a link to reset your password.",
-  sendResetLink: "Send reset link",
-  resetLinkSent: "Check your email for a password reset link.",
-  backToSignIn: "Back to sign in",
-  pleaseWait: "Please wait…",
-  errors: {
-    invalidCredential: "Incorrect email or password.",
-    userNotFound: "No account found.",
-    wrongPassword: "Incorrect password.",
-    userDisabled: "Account disabled.",
-    tooManyRequests: "Too many attempts.",
-    invalidEmail: "Enter a valid email address.",
-    emailAlreadyInUse: "Email already in use.",
-    weakPassword: "Password too weak.",
-    operationNotAllowed: "Not allowed.",
-    popupClosedByUser: "Popup closed.",
-    popupBlocked: "Popup blocked.",
-    accountExistsWithDifferentCredential: "Account exists.",
-    networkRequestFailed: "Network error.",
-    fallback: "Something went wrong.",
-  },
-  validation: {
-    emailRequired: "Enter a valid email address",
-    passwordRequired: "Password is required",
-    passwordMinLength: "Password must be at least 6 characters",
-    passwordUppercase: "Must contain at least one uppercase letter",
-    passwordNumber: "Must contain at least one number",
-    confirmPasswordRequired: "Please confirm your password",
-    passwordsMustMatch: "Passwords do not match",
-  },
-};
-
 function renderForm() {
-  render(<LoginForm lang="en" labels={labels} />);
+  render(<LoginForm lang="en" />);
 }
 
 // Labels are not associated via htmlFor, so query the inputs by id.
@@ -238,7 +192,9 @@ describe("LoginForm", () => {
     await switchToForgotPassword();
     await userEvent.type(screen.getByRole("textbox"), "ash@example.com");
     await userEvent.click(screen.getByRole("button", { name: "Send reset link" }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("Too many attempts.");
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Too many failed attempts. Please try again later.",
+    );
   });
 
   it("returns to sign in from forgot password", async () => {

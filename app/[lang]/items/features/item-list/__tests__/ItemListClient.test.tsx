@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ItemListClient } from "../ItemListClient";
 import { fetchItemList, fetchItem } from "@/lib/api/items";
 import { ITEM_LIST_PAGE_SIZE } from "@/lib/constants";
-import type { ItemModalLabels } from "@/components/ItemModal";
 
 jest.mock("@/lib/api/items", () => ({ fetchItemList: jest.fn(), fetchItem: jest.fn() }));
 jest.mock("@/lib/api/categories", () => ({ fetchItemCategory: jest.fn().mockResolvedValue(null) }));
@@ -21,28 +20,11 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mockReplace }),
   usePathname: () => "/en/items",
   useSearchParams: () => mockSearchParams,
+  useParams: () => ({ lang: "en" }),
 }));
 
 const fetchItemListMock = fetchItemList as jest.Mock;
 const fetchItemMock = fetchItem as jest.Mock;
-
-const itemModalLabels: ItemModalLabels = {
-  cost: "Cost",
-  category: "Category",
-  noDescription: "No description available.",
-  errorDefault: "Something went wrong",
-  empty: "—",
-  close: "Close",
-};
-
-const listLabels = {
-  previous: "← Previous",
-  next: "Next →",
-  pageOfTotalPattern: "{page} / {total}",
-  pagination: "Pagination",
-  loading: "Loading…",
-  errorDefault: "Something went wrong",
-};
 
 const list = {
   count: ITEM_LIST_PAGE_SIZE * 3,
@@ -58,7 +40,7 @@ function renderList() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <ItemListClient itemModalLabels={itemModalLabels} listLabels={listLabels} />
+      <ItemListClient locale="en" />
     </QueryClientProvider>,
   );
 }
@@ -114,6 +96,6 @@ describe("ItemListClient", () => {
     renderList();
     await screen.findByRole("button", { name: /Poke Ball/ });
     await userEvent.click(screen.getByRole("button", { name: "Next →" }));
-    expect(mockReplace).toHaveBeenCalledWith("/en/items?page=2", { scroll: false });
+    expect(window.location.pathname + window.location.search).toBe("/en/items?page=2");
   });
 });

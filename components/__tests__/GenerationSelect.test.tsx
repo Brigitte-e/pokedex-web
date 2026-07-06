@@ -1,39 +1,35 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { GenerationSelect, type GenerationSelectLabels } from "../GenerationSelect";
+import { Select } from "../Select";
 
-const labels: GenerationSelectLabels = {
-  filterByGeneration: "Filter by generation",
-  allGenerations: "All generations",
-  generationPattern: "Generation {suffix}",
-  generationPrefix: "generation-",
-};
+jest.mock("next/navigation", () => ({
+  useParams: () => ({ lang: "en" }),
+}));
 
 const generations = [{ name: "generation-i" }, { name: "generation-ii" }];
 
-describe("GenerationSelect", () => {
+describe("Select", () => {
   it("shows the placeholder when nothing is selected", () => {
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={jest.fn()} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={jest.fn()} />,
     );
     expect(screen.getByRole("combobox")).toHaveTextContent("Filter by generation");
   });
 
-  it("shows the formatted label of the selected generation", () => {
+  it("shows the selected generation name", () => {
     render(
-      <GenerationSelect
+      <Select
         generations={generations}
         selected="generation-ii"
         onChange={jest.fn()}
-        labels={labels}
       />,
     );
-    expect(screen.getByRole("combobox")).toHaveTextContent("Generation II");
+    expect(screen.getByRole("combobox")).toHaveTextContent("generation-ii");
   });
 
   it("opens the listbox with all options on click", async () => {
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={jest.fn()} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={jest.fn()} />,
     );
     await userEvent.click(screen.getByRole("combobox"));
     expect(screen.getByRole("listbox")).toBeInTheDocument();
@@ -44,10 +40,10 @@ describe("GenerationSelect", () => {
   it("selects a generation and closes the list", async () => {
     const onChange = jest.fn();
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={onChange} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={onChange} />,
     );
     await userEvent.click(screen.getByRole("combobox"));
-    await userEvent.click(screen.getByText("Generation I"));
+    await userEvent.click(screen.getByText("generation-i"));
     expect(onChange).toHaveBeenCalledWith("generation-i");
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
   });
@@ -55,11 +51,10 @@ describe("GenerationSelect", () => {
   it("clears the filter via the all-generations option", async () => {
     const onChange = jest.fn();
     render(
-      <GenerationSelect
+      <Select
         generations={generations}
         selected="generation-i"
         onChange={onChange}
-        labels={labels}
       />,
     );
     await userEvent.click(screen.getByRole("combobox"));
@@ -70,7 +65,7 @@ describe("GenerationSelect", () => {
   it("supports keyboard selection with arrow keys and Enter", async () => {
     const onChange = jest.fn();
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={onChange} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={onChange} />,
     );
     const combobox = screen.getByRole("combobox");
     combobox.focus();
@@ -86,7 +81,7 @@ describe("GenerationSelect", () => {
   it("closes on Escape without selecting", async () => {
     const onChange = jest.fn();
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={onChange} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={onChange} />,
     );
     await userEvent.click(screen.getByRole("combobox"));
     await userEvent.keyboard("{Escape}");
@@ -96,7 +91,7 @@ describe("GenerationSelect", () => {
 
   it("opens and closes with Enter on the trigger", async () => {
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={jest.fn()} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={jest.fn()} />,
     );
     const combobox = screen.getByRole("combobox");
     combobox.focus();
@@ -109,7 +104,7 @@ describe("GenerationSelect", () => {
 
   it("clamps ArrowUp at the first option and Escape closes the list", async () => {
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={jest.fn()} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={jest.fn()} />,
     );
     const combobox = screen.getByRole("combobox");
     combobox.focus();
@@ -122,7 +117,7 @@ describe("GenerationSelect", () => {
 
   it("closes when clicking outside", async () => {
     render(
-      <GenerationSelect generations={generations} selected={null} onChange={jest.fn()} labels={labels} />,
+      <Select generations={generations} selected={null} onChange={jest.fn()} />,
     );
     await userEvent.click(screen.getByRole("combobox"));
     expect(screen.getByRole("listbox")).toBeInTheDocument();

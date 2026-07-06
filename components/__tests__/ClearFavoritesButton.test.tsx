@@ -2,12 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ClearFavoritesButton } from "../ClearFavoritesButton";
 
+jest.mock("next/navigation", () => ({ useParams: () => ({ lang: "en" }) }));
+
 const defaultProps = {
   onClear: jest.fn(),
-  label: "Clear all favorites",
-  confirmText: "Do you really want to remove all pokemon from favorites?",
-  confirmLabel: "Clear all",
-  cancelLabel: "Cancel",
 };
 
 describe("ClearFavoritesButton", () => {

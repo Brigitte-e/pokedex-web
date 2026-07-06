@@ -16,60 +16,10 @@ import {
 import { getFirebaseAuth } from "@/lib/firebase";
 import { getAuthErrorMessage } from "@/lib/firebase-errors";
 import { useAuthStore } from "@/store/auth";
+import { useTranslation } from "@/hooks/useTranslation";
 
-export interface AuthLabels {
-  signIn: string;
-  signUp: string;
-  signInTitle: string;
-  signUpTitle: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  showPassword: string;
-  hidePassword: string;
-  continueWithGoogle: string;
-  noAccount: string;
-  alreadyHaveAccount: string;
-  forgotPassword: string;
-  forgotPasswordTitle: string;
-  forgotPasswordDescription: string;
-  sendResetLink: string;
-  resetLinkSent: string;
-  backToSignIn: string;
-  pleaseWait: string;
-  errors: {
-    invalidCredential: string;
-    userNotFound: string;
-    wrongPassword: string;
-    userDisabled: string;
-    tooManyRequests: string;
-    invalidEmail: string;
-    emailAlreadyInUse: string;
-    weakPassword: string;
-    operationNotAllowed: string;
-    popupClosedByUser: string;
-    popupBlocked: string;
-    accountExistsWithDifferentCredential: string;
-    networkRequestFailed: string;
-    fallback: string;
-  };
-  validation: {
-    emailRequired: string;
-    passwordRequired: string;
-    passwordMinLength: string;
-    passwordUppercase: string;
-    passwordNumber: string;
-    confirmPasswordRequired: string;
-    passwordsMustMatch: string;
-  };
-}
-
-interface Props {
-  lang: string;
-  labels: AuthLabels;
-}
-
-export function LoginForm({ lang, labels }: Props) {
+const LoginForm = () => {
+  const { locale, t } = useTranslation();
   const router = useRouter();
   const { user, loading: authLoading } = useAuthStore();
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
@@ -80,11 +30,19 @@ export function LoginForm({ lang, labels }: Props) {
 
   useEffect(() => {
     if (!authLoading && user) {
-      router.replace(`/${lang}/pokemon`);
+      router.replace(`/${locale}/pokemon`);
     }
-  }, [authLoading, user, lang, router]);
+  }, [authLoading, user, locale, router]);
 
-  const v = labels.validation;
+  const v = {
+    emailRequired: t("auth.validation.emailRequired"),
+    passwordRequired: t("auth.validation.passwordRequired"),
+    passwordMinLength: t("auth.validation.passwordMinLength"),
+    passwordUppercase: t("auth.validation.passwordUppercase"),
+    passwordNumber: t("auth.validation.passwordNumber"),
+    confirmPasswordRequired: t("auth.validation.confirmPasswordRequired"),
+    passwordsMustMatch: t("auth.validation.passwordsMustMatch"),
+  };
 
   const signInSchema = z.object({
     email: z.string().email(v.emailRequired),
@@ -152,7 +110,7 @@ export function LoginForm({ lang, labels }: Props) {
     try {
       await signInWithEmailAndPassword(getFirebaseAuth(), values.email, values.password);
     } catch (err) {
-      setFirebaseError(getAuthErrorMessage(err, labels.errors));
+      setFirebaseError(getAuthErrorMessage(err, t));
     }
   }
 
@@ -161,7 +119,7 @@ export function LoginForm({ lang, labels }: Props) {
     try {
       await createUserWithEmailAndPassword(getFirebaseAuth(), values.email, values.password);
     } catch (err) {
-      setFirebaseError(getAuthErrorMessage(err, labels.errors));
+      setFirebaseError(getAuthErrorMessage(err, t));
     }
   }
 
@@ -170,7 +128,7 @@ export function LoginForm({ lang, labels }: Props) {
     try {
       await signInWithPopup(getFirebaseAuth(), new GoogleAuthProvider());
     } catch (err) {
-      const msg = getAuthErrorMessage(err, labels.errors);
+      const msg = getAuthErrorMessage(err, t);
       if (msg) setFirebaseError(msg);
     }
   }
@@ -180,20 +138,20 @@ export function LoginForm({ lang, labels }: Props) {
     setResetSent(false);
     try {
       await sendPasswordResetEmail(getFirebaseAuth(), values.email, {
-        url: `${window.location.origin}/${lang}/login`,
+        url: `${window.location.origin}/${locale}/login`,
       });
       setResetSent(true);
     } catch (err) {
-      setFirebaseError(getAuthErrorMessage(err, labels.errors));
+      setFirebaseError(getAuthErrorMessage(err, t));
     }
   }
 
   const title =
     mode === "signin"
-      ? labels.signInTitle
+      ? t("auth.signInTitle")
       : mode === "signup"
-        ? labels.signUpTitle
-        : labels.forgotPasswordTitle;
+        ? t("auth.signUpTitle")
+        : t("auth.forgotPasswordTitle");
 
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
@@ -202,7 +160,7 @@ export function LoginForm({ lang, labels }: Props) {
           <h1 className="text-3xl font-bold">PokéDex</h1>
           <p className="mt-1 text-sm text-muted-foreground">{title}</p>
           {mode === "forgot" && (
-            <p className="mt-2 text-sm text-muted-foreground">{labels.forgotPasswordDescription}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{t("auth.forgotPasswordDescription")}</p>
           )}
         </div>
 
@@ -214,13 +172,13 @@ export function LoginForm({ lang, labels }: Props) {
 
         {resetSent && (
           <p role="status" className="rounded-md bg-green-500/10 px-3 py-2 text-sm text-green-700 dark:text-green-400">
-            {labels.resetLinkSent}
+            {t("auth.resetLinkSent")}
           </p>
         )}
 
         {mode === "signin" ? (
           <form onSubmit={signInForm.handleSubmit(onSignIn)} className="space-y-4" noValidate>
-            <Field label={labels.email} error={signInForm.formState.errors.email?.message}>
+            <Field label={t("auth.email")} error={signInForm.formState.errors.email?.message}>
               <input
                 id="email"
                 type="email"
@@ -230,15 +188,15 @@ export function LoginForm({ lang, labels }: Props) {
               />
             </Field>
 
-            <Field label={labels.password} error={signInForm.formState.errors.password?.message}>
+            <Field label={t("auth.password")} error={signInForm.formState.errors.password?.message}>
               <PasswordInput
                 id="password"
                 autoComplete="current-password"
                 show={showPassword}
                 onToggle={() => setShowPassword((v) => !v)}
                 hasError={!!signInForm.formState.errors.password}
-                showLabel={labels.showPassword}
-                hideLabel={labels.hidePassword}
+                showLabel={t("auth.showPassword")}
+                hideLabel={t("auth.hidePassword")}
                 {...signInForm.register("password")}
               />
             </Field>
@@ -249,7 +207,7 @@ export function LoginForm({ lang, labels }: Props) {
                 className="text-sm font-medium text-primary hover:underline"
                 onClick={() => switchMode("forgot")}
               >
-                {labels.forgotPassword}
+                {t("auth.forgotPassword")}
               </button>
             </div>
 
@@ -258,12 +216,12 @@ export function LoginForm({ lang, labels }: Props) {
               disabled={isSubmitting}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {isSubmitting ? labels.pleaseWait : labels.signIn}
+              {isSubmitting ? t("auth.pleaseWait") : t("auth.signIn")}
             </button>
           </form>
         ) : mode === "signup" ? (
           <form onSubmit={signUpForm.handleSubmit(onSignUp)} className="space-y-4" noValidate>
-            <Field label={labels.email} error={signUpForm.formState.errors.email?.message}>
+            <Field label={t("auth.email")} error={signUpForm.formState.errors.email?.message}>
               <input
                 id="email"
                 type="email"
@@ -273,28 +231,28 @@ export function LoginForm({ lang, labels }: Props) {
               />
             </Field>
 
-            <Field label={labels.password} error={signUpForm.formState.errors.password?.message}>
+            <Field label={t("auth.password")} error={signUpForm.formState.errors.password?.message}>
               <PasswordInput
                 id="password"
                 autoComplete="new-password"
                 show={showPassword}
                 onToggle={() => setShowPassword((v) => !v)}
                 hasError={!!signUpForm.formState.errors.password}
-                showLabel={labels.showPassword}
-                hideLabel={labels.hidePassword}
+                showLabel={t("auth.showPassword")}
+                hideLabel={t("auth.hidePassword")}
                 {...signUpForm.register("password")}
               />
             </Field>
 
-            <Field label={labels.confirmPassword} error={signUpForm.formState.errors.confirmPassword?.message}>
+            <Field label={t("auth.confirmPassword")} error={signUpForm.formState.errors.confirmPassword?.message}>
               <PasswordInput
                 id="confirmPassword"
                 autoComplete="new-password"
                 show={showConfirm}
                 onToggle={() => setShowConfirm((v) => !v)}
                 hasError={!!signUpForm.formState.errors.confirmPassword}
-                showLabel={labels.showPassword}
-                hideLabel={labels.hidePassword}
+                showLabel={t("auth.showPassword")}
+                hideLabel={t("auth.hidePassword")}
                 {...signUpForm.register("confirmPassword")}
               />
             </Field>
@@ -304,12 +262,12 @@ export function LoginForm({ lang, labels }: Props) {
               disabled={isSubmitting}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {isSubmitting ? labels.pleaseWait : labels.signUp}
+              {isSubmitting ? t("auth.pleaseWait") : t("auth.signUp")}
             </button>
           </form>
         ) : (
           <form onSubmit={forgotForm.handleSubmit(onForgotPassword)} className="space-y-4" noValidate>
-            <Field label={labels.email} error={forgotForm.formState.errors.email?.message}>
+            <Field label={t("auth.email")} error={forgotForm.formState.errors.email?.message}>
               <input
                 id="email"
                 type="email"
@@ -324,7 +282,7 @@ export function LoginForm({ lang, labels }: Props) {
               disabled={isSubmitting || resetSent}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
             >
-              {isSubmitting ? labels.pleaseWait : labels.sendResetLink}
+              {isSubmitting ? t("auth.pleaseWait") : t("auth.sendResetLink")}
             </button>
           </form>
         )}
@@ -347,17 +305,17 @@ export function LoginForm({ lang, labels }: Props) {
           style={{ fontFamily: '"Roboto", "Helvetica Neue", Arial, sans-serif' }}
         >
           <GoogleIcon />
-          {labels.continueWithGoogle}
+          {t("auth.continueWithGoogle")}
         </button>
 
         <p className="text-center text-sm text-muted-foreground">
-          {mode === "signin" ? `${labels.noAccount} ` : `${labels.alreadyHaveAccount} `}
+          {mode === "signin" ? `${t("auth.noAccount")} ` : `${t("auth.alreadyHaveAccount")} `}
           <button
             type="button"
             className="font-medium text-primary hover:underline"
             onClick={() => switchMode(mode === "signin" ? "signup" : "signin")}
           >
-            {mode === "signin" ? labels.signUp : labels.signIn}
+            {mode === "signin" ? t("auth.signUp") : t("auth.signIn")}
           </button>
         </p>
           </>
@@ -370,14 +328,16 @@ export function LoginForm({ lang, labels }: Props) {
               className="font-medium text-primary hover:underline"
               onClick={() => switchMode("signin")}
             >
-              {labels.backToSignIn}
+              {t("auth.backToSignIn")}
             </button>
           </p>
         )}
       </div>
     </main>
   );
-}
+};
+
+export { LoginForm };
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -393,7 +353,7 @@ interface FieldProps {
   children: React.ReactNode;
 }
 
-function Field({ label, error, children }: FieldProps) {
+const Field = ({ label, error, children }: FieldProps) => {
   return (
     <div className="space-y-1">
       <label className="text-sm font-medium">{label}</label>
@@ -405,7 +365,7 @@ function Field({ label, error, children }: FieldProps) {
       )}
     </div>
   );
-}
+};
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   show: boolean;
@@ -437,7 +397,7 @@ const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
 );
 PasswordInput.displayName = "PasswordInput";
 
-function GoogleIcon() {
+const GoogleIcon = () => {
   return (
     <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
       <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
@@ -446,4 +406,4 @@ function GoogleIcon() {
       <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
     </svg>
   );
-}
+};

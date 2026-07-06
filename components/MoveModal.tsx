@@ -14,27 +14,15 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import type { Locale } from "@/lib/constants";
+import { useTranslation } from "@/hooks/useTranslation";
 
-export interface MoveModalLabels {
-  power: string;
-  accuracy: string;
-  pp: string;
-  noDescription: string;
-  errorDefault: string;
-  empty: string;
-  close: string;
-  damageClassNames?: Record<string, string>;
-}
-
-interface MoveModalProps {
+interface Props {
   moveName: string;
   onClose: () => void;
-  labels: MoveModalLabels;
-  locale?: Locale;
 }
 
-export function MoveModal({ moveName, onClose, labels, locale = "en" }: MoveModalProps) {
+const MoveModal = ({ moveName, onClose }: Props) => {
+  const { t, locale } = useTranslation();
   const { data, isError } = useQuery({
     queryKey: ["move", moveName],
     queryFn: () => fetchMove(moveName),
@@ -59,24 +47,32 @@ export function MoveModal({ moveName, onClose, labels, locale = "en" }: MoveModa
       : undefined;
   const description = data
     ? (getLocalizedDescription(data.effect_entries, data.flavor_text_entries, locale) ??
-      labels.noDescription)
+      t("common.noDescription"))
     : undefined;
 
   if (isError) {
     return (
       <Dialog open onOpenChange={(open) => !open && onClose()}>
-        <DialogContent closeLabel={labels.close}>
+        <DialogContent>
           <p className="py-6 text-center text-sm text-destructive">
-            {labels.errorDefault}
+            {t("common.errorDefault")}
           </p>
         </DialogContent>
       </Dialog>
     );
   }
 
+  const damageClassKey = data ? `damageClass.${data.damage_class.name}` : "";
+  const damageClassLabel =
+    data && t(damageClassKey) !== damageClassKey
+      ? t(damageClassKey)
+      : data
+        ? capitalize(data.damage_class.name)
+        : "";
+
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
-      <DialogContent closeLabel={labels.close}>
+      <DialogContent>
         <DialogHeader>
           {data ? (
             <div className="flex items-center gap-3">
@@ -88,7 +84,7 @@ export function MoveModal({ moveName, onClose, labels, locale = "en" }: MoveModa
                 {localizedTypeName}
               </span>
               <span className="rounded-full px-3 py-0.5 text-xs font-semibold bg-muted text-muted-foreground">
-                {labels.damageClassNames?.[data.damage_class.name] ?? capitalize(data.damage_class.name)}
+                {damageClassLabel}
               </span>
             </div>
           ) : (
@@ -117,9 +113,9 @@ export function MoveModal({ moveName, onClose, labels, locale = "en" }: MoveModa
           {data ? (
             <>
               {[
-                { label: labels.power, value: data.power ?? labels.empty },
-                { label: labels.accuracy, value: data.accuracy != null ? `${data.accuracy}%` : labels.empty },
-                { label: labels.pp, value: data.pp },
+                { label: t("moveModal.power"), value: data.power ?? t("common.empty") },
+                { label: t("moveModal.accuracy"), value: data.accuracy != null ? `${data.accuracy}%` : t("common.empty") },
+                { label: t("moveModal.pp"), value: data.pp },
               ].map(({ label, value }) => (
                 <div key={label} className="rounded-xl bg-muted/50 px-3 py-2 text-center">
                   <div className="text-xs text-muted-foreground mb-1">{label}</div>
@@ -138,4 +134,6 @@ export function MoveModal({ moveName, onClose, labels, locale = "en" }: MoveModa
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export { MoveModal };

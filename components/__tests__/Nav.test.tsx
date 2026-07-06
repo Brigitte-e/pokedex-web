@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { Nav, type NavLabels } from "../Nav";
+import { Nav } from "../Nav";
 import { useAuthStore } from "@/store/auth";
 import type { User } from "firebase/auth";
 
@@ -8,20 +8,9 @@ let mockPathname = "/en/pokemon";
 jest.mock("next/navigation", () => ({
   usePathname: () => mockPathname,
   useRouter: () => ({ push: jest.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+  useParams: () => ({ lang: "en" }),
 }));
-
-const labels: NavLabels = {
-  logo: "PokéDex",
-  ariaLabel: "Main navigation",
-  pokemon: "Pokémon",
-  types: "Types",
-  moves: "Moves",
-  items: "Items",
-  pokemonOfTheDay: "Pokémon of the Day",
-  favorites: "Favorites",
-  login: "Log in",
-  profile: "Profile",
-};
 
 describe("Nav", () => {
   beforeEach(() => {
@@ -30,7 +19,7 @@ describe("Nav", () => {
   });
 
   it("renders all navigation links with locale-prefixed hrefs", () => {
-    render(<Nav labels={labels} locale="en" />);
+    render(<Nav />);
     const nav = screen.getByRole("navigation", { name: "Main navigation" });
     expect(nav).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Types" })).toHaveAttribute("href", "/en/types");
@@ -40,19 +29,19 @@ describe("Nav", () => {
 
   it("marks the current section as active", () => {
     mockPathname = "/en/types";
-    render(<Nav labels={labels} locale="en" />);
+    render(<Nav />);
     expect(screen.getByRole("link", { name: "Types" })).toHaveClass("bg-pk-red");
     expect(screen.getByRole("link", { name: "Moves" })).not.toHaveClass("bg-pk-red");
   });
 
   it("points favorites to login for guests", () => {
-    render(<Nav labels={labels} locale="en" />);
+    render(<Nav />);
     expect(screen.getByRole("link", { name: "Favorites" })).toHaveAttribute("href", "/en/login");
   });
 
   it("points favorites to the favorites page for signed-in users", () => {
     useAuthStore.setState({ user: { uid: "u1" } as User, loading: false });
-    render(<Nav labels={labels} locale="en" />);
+    render(<Nav />);
     expect(screen.getByRole("link", { name: "Favorites" })).toHaveAttribute(
       "href",
       "/en/favorites",

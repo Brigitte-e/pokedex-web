@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { PokemonFilters } from "../index";
+import { PokemonFiltersFeature } from "../index";
 import { fetchTypeList } from "@/lib/api/types";
 import { fetchGenerationList } from "@/lib/api/generations";
 
@@ -9,51 +9,32 @@ jest.mock("@/lib/api/types", () => ({ fetchTypeList: jest.fn(), fetchType: jest.
 jest.mock("@/lib/api/generations", () => ({ fetchGenerationList: jest.fn() }));
 
 const mockReplace = jest.fn();
+let mockSearchParams = new URLSearchParams();
+
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mockReplace }),
   usePathname: () => "/en/pokemon",
+  useSearchParams: () => mockSearchParams,
+  useParams: () => ({ lang: "en" }),
 }));
 
 const fetchTypeListMock = fetchTypeList as jest.Mock;
 const fetchGenerationListMock = fetchGenerationList as jest.Mock;
 
-const genLabels = {
-  filterByGeneration: "Filter by generation",
-  allGenerations: "All generations",
-  generationPattern: "Generation {suffix}",
-  generationPrefix: "generation-",
-};
-
-const typeLabels = {
-  filterByType: "Filter by type",
-  typesSelectedPattern: "{count} types selected",
-  clearAll: "Clear all",
-  searchPlaceholder: "Search types…",
-  noTypesFound: "No types found",
-  scrollForMore: "Scroll for more…",
-  removeTypePattern: "Remove {name}",
-  clearSearch: "Clear search",
-};
-
-function renderFilters(selectedTypes: string[] = [], selectedGeneration: string | null = null) {
+function renderFilters(searchParams: URLSearchParams = new URLSearchParams()) {
+  mockSearchParams = searchParams;
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <PokemonFilters
-        selectedTypes={selectedTypes}
-        selectedGeneration={selectedGeneration}
-        title="Pokédex"
-        genLabels={genLabels}
-        typeLabels={typeLabels}
-        locale="en"
-      />
+      <PokemonFiltersFeature />
     </QueryClientProvider>,
   );
 }
 
-describe("PokemonFilters", () => {
+describe("PokemonFiltersFeature", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSearchParams = new URLSearchParams();
     fetchTypeListMock.mockResolvedValue({
       count: 3,
       next: null,
@@ -94,9 +75,8 @@ describe("PokemonFilters", () => {
     renderFilters();
     await userEvent.click(screen.getByText("Filter by generation"));
     const options = await screen.findAllByRole("option");
-    // "All generations" first, then generations sorted by numeric id
-    expect(options[1]).toHaveTextContent("Generation I");
-    expect(options[2]).toHaveTextContent("Generation II");
+    expect(options[1]).toHaveTextContent("generation-i");
+    expect(options[2]).toHaveTextContent("generation-ii");
     await userEvent.click(options[1]);
     expect(mockReplace).toHaveBeenCalledWith("/en/pokemon?generation=generation-i", {
       scroll: false,
@@ -104,7 +84,7 @@ describe("PokemonFilters", () => {
   });
 
   it("keeps the selected generation when changing types", async () => {
-    renderFilters([], "generation-i");
+    renderFilters(new URLSearchParams("generation=generation-i"));
     await userEvent.click(screen.getByText("Filter by type"));
     await userEvent.click(await screen.findByRole("option", { name: /Water/ }));
     expect(mockReplace).toHaveBeenCalledWith(
@@ -114,8 +94,18 @@ describe("PokemonFilters", () => {
   });
 
   it("clears all filters back to the bare path", async () => {
-    renderFilters(["fire"], null);
+    renderFilters(new URLSearchParams("types=fire"));
     await userEvent.click(await screen.findByRole("button", { name: "Clear all" }));
     expect(mockReplace).toHaveBeenCalledWith("/en/pokemon", { scroll: false });
+  });
+
+  it("removes the page param when changing filters", async () => {
+    renderFilters(new URLSearchParams("page=3"));
+    await userEvent.click(screen.getByText("Filter by generation"));
+    const options = await screen.findAllByRole("option");
+    await userEvent.click(options[1]);
+    expect(mockReplace).toHaveBeenCalledWith("/en/pokemon?generation=generation-i", {
+      scroll: false,
+    });
   });
 });

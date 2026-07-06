@@ -1,58 +1,27 @@
 "use client";
 
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-import { TypeFilter } from "@/app/[lang]/pokemon/features/type-filter";
-import { GenerationFilter } from "@/app/[lang]/pokemon/features/generation-filter";
 import { PageHeader } from "@/components/PageHeader";
-
-import type { Locale } from "@/lib/constants";
-
-interface GenerationLabels {
-  filterByGeneration: string;
-  allGenerations: string;
-  generationPattern: string;
-  generationPrefix: string;
-}
-
-interface TypeMultiSelectLabels {
-  filterByType: string;
-  typesSelectedPattern: string;
-  clearAll: string;
-  searchPlaceholder: string;
-  noTypesFound: string;
-  scrollForMore: string;
-  removeTypePattern: string;
-  clearSearch: string;
-}
-
-interface Props {
-  selectedTypes: string[];
-  selectedGeneration: string | null;
-  title: string;
-  genLabels: GenerationLabels;
-  typeLabels: TypeMultiSelectLabels;
-  locale: Locale;
-}
+import { parseTypesParam } from "@/app/[lang]/pokemon/utils/parseTypesParam";
+import { GenerationFilter } from "./generation-filter";
+import { TypeFilter } from "./type-filter";
 
 function buildQueryString(types: string[], generation: string | null): string {
   const params = new URLSearchParams();
   if (types.length > 0) params.set("types", types.join(","));
   if (generation) params.set("generation", generation);
+  // Omit page — changing filters resets pagination to the first page.
   const qs = params.toString();
   return qs ? `?${qs}` : "";
 }
 
-export function PokemonFilters({
-  selectedTypes,
-  selectedGeneration,
-  title,
-  genLabels,
-  typeLabels,
-  locale,
-}: Props) {
+const PokemonFiltersFeature = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selectedTypes = parseTypesParam(searchParams.get("types") ?? undefined);
+  const selectedGeneration = searchParams.get("generation") ?? null;
 
   const updateFilters = useCallback(
     (types: string[], generation: string | null) => {
@@ -73,22 +42,18 @@ export function PokemonFilters({
 
   return (
     <PageHeader
-      title={title}
+      titleKey="pages.pokedex.title"
       rightSlot={
         <div className="flex flex-wrap items-center justify-end gap-2">
           <GenerationFilter
             selected={selectedGeneration}
             onChange={handleGenerationChange}
-            labels={genLabels}
           />
-          <TypeFilter
-            selected={selectedTypes}
-            onChange={handleTypeChange}
-            labels={typeLabels}
-            locale={locale}
-          />
+          <TypeFilter selected={selectedTypes} onChange={handleTypeChange} />
         </div>
       }
     />
   );
-}
+};
+
+export { PokemonFiltersFeature };

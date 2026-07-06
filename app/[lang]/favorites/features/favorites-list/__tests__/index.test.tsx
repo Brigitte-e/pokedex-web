@@ -18,22 +18,10 @@ jest.mock("@/components/LazyImage", () => ({
 const mockReplace = jest.fn();
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mockReplace }),
+  useParams: () => ({ lang: "en" }),
 }));
 
 const useFavoritesMock = useFavorites as jest.Mock;
-
-const labels = {
-  loading: "Loading…",
-  empty: "No favorites yet.",
-  savedCountPattern: "{count} saved Pokémon",
-  removeLabel: "Remove from favorites",
-  clearAll: "Clear all favorites",
-  confirmRemove: "Really remove?",
-  confirmRemoveCancel: "Cancel",
-  confirmRemoveConfirm: "Remove",
-  confirmClearAll: "Really clear all?",
-  confirmClearAllConfirm: "Clear all",
-};
 
 function mockFavorites(overrides: Partial<ReturnType<typeof useFavorites>> = {}) {
   useFavoritesMock.mockReturnValue({
@@ -56,20 +44,22 @@ describe("FavoritesList", () => {
 
   it("shows the loading text while favorites load", () => {
     mockFavorites({ loading: true });
-    render(<FavoritesList labels={labels} locale="en" />);
+    render(<FavoritesList locale="en" />);
     expect(screen.getByText("Loading…")).toBeInTheDocument();
   });
 
   it("redirects guests to the login page", () => {
     mockFavorites({ isAuthenticated: false });
-    render(<FavoritesList labels={labels} locale="en" />);
+    render(<FavoritesList locale="en" />);
     expect(mockReplace).toHaveBeenCalledWith("/en/login");
   });
 
   it("shows the empty message without favorites", () => {
     mockFavorites();
-    render(<FavoritesList labels={labels} locale="en" />);
-    expect(screen.getByText("No favorites yet.")).toBeInTheDocument();
+    render(<FavoritesList locale="en" />);
+    expect(
+      screen.getByText("No favorites yet. Star a Pokémon on its detail page."),
+    ).toBeInTheDocument();
   });
 
   it("renders a card per favorite and the saved count", () => {
@@ -79,7 +69,7 @@ describe("FavoritesList", () => {
         { id: "1", name: "bulbasaur" },
       ],
     });
-    render(<FavoritesList labels={labels} locale="en" />);
+    render(<FavoritesList locale="en" />);
     expect(screen.getByText("2 saved Pokémon")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Remove from favorites" })).toHaveLength(2);
   });
@@ -87,7 +77,7 @@ describe("FavoritesList", () => {
   it("removes a favorite after confirmation", async () => {
     const remove = jest.fn();
     mockFavorites({ favorites: [{ id: "25", name: "pikachu" }], remove });
-    render(<FavoritesList labels={labels} locale="en" />);
+    render(<FavoritesList locale="en" />);
     await userEvent.click(screen.getByRole("button", { name: "Remove from favorites" }));
     await userEvent.click(screen.getByRole("button", { name: "Remove" }));
     expect(remove).toHaveBeenCalledWith("25");
@@ -96,7 +86,7 @@ describe("FavoritesList", () => {
   it("clears all favorites after confirmation", async () => {
     const clear = jest.fn();
     mockFavorites({ favorites: [{ id: "25", name: "pikachu" }], clear });
-    render(<FavoritesList labels={labels} locale="en" />);
+    render(<FavoritesList locale="en" />);
     await userEvent.click(screen.getByRole("button", { name: "Clear all favorites" }));
     await userEvent.click(screen.getByRole("button", { name: "Clear all" }));
     expect(clear).toHaveBeenCalled();

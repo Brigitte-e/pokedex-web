@@ -75,4 +75,65 @@ describe("favorites service", () => {
     expect(callback).toHaveBeenCalledWith([{ id: "1", name: "bulbasaur" }]);
     expect(result).toBe(unsubscribe);
   });
+
+  describe("cypress e2e seam", () => {
+    type E2EWindow = Window & {
+      Cypress?: unknown;
+      __E2E_FAVORITES__?: { id: string; name: string }[];
+    };
+    const w = window as E2EWindow;
+
+    beforeEach(() => {
+      w.Cypress = {};
+      w.__E2E_FAVORITES__ = [{ id: "1", name: "bulbasaur" }];
+    });
+
+    afterEach(() => {
+      delete w.Cypress;
+      delete w.__E2E_FAVORITES__;
+    });
+
+    it("subscribes to the in-memory store instead of Firestore", () => {
+      const callback = jest.fn();
+      const unsubscribe = subscribeToFavorites("user-1", callback);
+      expect(callback).toHaveBeenCalledWith([{ id: "1", name: "bulbasaur" }]);
+      expect(onSnapshot).not.toHaveBeenCalled();
+      unsubscribe();
+    });
+
+    it("adds to the in-memory store and notifies subscribers", async () => {
+      const callback = jest.fn();
+      const unsubscribe = subscribeToFavorites("user-1", callback);
+      await addFavorite("user-1", { id: "25", name: "pikachu" });
+      expect(callback).toHaveBeenLastCalledWith([
+        { id: "1", name: "bulbasaur" },
+        { id: "25", name: "pikachu" },
+      ]);
+      expect(setDoc).not.toHaveBeenCalled();
+      unsubscribe();
+    });
+
+    it("replaces an existing favorite with the same id", async () => {
+      await addFavorite("user-1", { id: "1", name: "ivysaur" });
+      expect(w.__E2E_FAVORITES__).toEqual([{ id: "1", name: "ivysaur" }]);
+    });
+
+    it("removes from the in-memory store and notifies subscribers", async () => {
+      const callback = jest.fn();
+      const unsubscribe = subscribeToFavorites("user-1", callback);
+      await removeFavorite("user-1", "1");
+      expect(callback).toHaveBeenLastCalledWith([]);
+      expect(deleteDoc).not.toHaveBeenCalled();
+      unsubscribe();
+    });
+
+    it("stops notifying after unsubscribe", async () => {
+      const callback = jest.fn();
+      const unsubscribe = subscribeToFavorites("user-1", callback);
+      unsubscribe();
+      callback.mockClear();
+      await addFavorite("user-1", { id: "25", name: "pikachu" });
+      expect(callback).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -5,7 +5,7 @@ interface Props {
   localizedName: string;
 }
 
-export function TypeHeader({ name, localizedName }: Props) {
+const TypeHeader = ({ name, localizedName }: Props) => {
   const color = TYPE_COLORS[name] ?? DEFAULT_TYPE_COLOR;
 
   return (
@@ -18,4 +18,6 @@ export function TypeHeader({ name, localizedName }: Props) {
       </h1>
     </div>
   );
-}
+};
+
+export { TypeHeader };

@@ -5,19 +5,10 @@ import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { useAuthStore } from "@/store/auth";
+import { useTranslation } from "@/hooks/useTranslation";
 
-export interface ProfileLabels {
-  fallbackName: string;
-  signOut: string;
-  signOutError: string;
-}
-
-interface Props {
-  lang: string;
-  labels: ProfileLabels;
-}
-
-export function ProfileClient({ lang, labels }: Props) {
+const ProfileClient = () => {
+  const { locale, t } = useTranslation();
   const router = useRouter();
   const { user, loading } = useAuthStore();
   const signingOut = useRef(false);
@@ -25,19 +16,19 @@ export function ProfileClient({ lang, labels }: Props) {
 
   useEffect(() => {
     if (!loading && !user && !signingOut.current) {
-      router.replace(`/${lang}/login`);
+      router.replace(`/${locale}/login`);
     }
-  }, [loading, user, lang, router]);
+  }, [loading, user, locale, router]);
 
   async function handleSignOut() {
     setSignOutError(null);
     signingOut.current = true;
     try {
       await signOut(getFirebaseAuth());
-      router.push(`/${lang}/pokemon`);
+      router.push(`/${locale}/pokemon`);
     } catch {
       signingOut.current = false;
-      setSignOutError(labels.signOutError);
+      setSignOutError(t("profile.signOutError"));
     }
   }
 
@@ -49,7 +40,7 @@ export function ProfileClient({ lang, labels }: Props) {
     );
   }
 
-  const displayName = user.displayName || user.email || labels.fallbackName;
+  const displayName = user.displayName || user.email || t("profile.fallbackName");
 
   return (
     <main className="mx-auto max-w-md px-6 py-16 space-y-8">
@@ -86,8 +77,10 @@ export function ProfileClient({ lang, labels }: Props) {
         onClick={handleSignOut}
         className="w-full rounded-md border border-destructive px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
       >
-        {labels.signOut}
+        {t("profile.signOut")}
       </button>
     </main>
   );
-}
+};
+
+export { ProfileClient };

@@ -1,7 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import { LoadingState } from "../LoadingState";
 
+let mockLang = "en";
+jest.mock("next/navigation", () => ({ useParams: () => ({ lang: mockLang }) }));
+
 describe("LoadingState", () => {
+  beforeEach(() => {
+    mockLang = "en";
+  });
+
   it("renders inline text by default", () => {
     render(<LoadingState />);
     expect(screen.getByText("Loading…")).toBeInTheDocument();
@@ -19,9 +26,10 @@ describe("LoadingState", () => {
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
-  it("renders a custom loading text inline", () => {
-    render(<LoadingState loadingText="Bitte warten…" />);
-    expect(screen.getByText("Bitte warten…")).toBeInTheDocument();
+  it("renders the localized loading text inline", () => {
+    mockLang = "de";
+    render(<LoadingState />);
+    expect(screen.getByText("Laden…")).toBeInTheDocument();
   });
 
   it.each(["item-list", "move-list", "type-grid", "type-detail"] as const)(

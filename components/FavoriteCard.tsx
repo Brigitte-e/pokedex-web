@@ -10,32 +10,19 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
-import type { Locale } from "@/lib/constants";
+import { useTranslation } from "@/hooks/useTranslation";
 
-interface FavoriteCardProps {
+interface Props {
   id: number;
   name: string;
   displayName?: string;
-  locale: Locale;
   onRemove: () => void;
-  removeLabel?: string;
-  confirmRemove?: string;
-  confirmRemoveCancel?: string;
-  confirmRemoveConfirm?: string;
 }
 
-export function FavoriteCard({
-  id,
-  name,
-  displayName,
-  locale,
-  onRemove,
-  removeLabel = "Remove from favorites",
-  confirmRemove = "Do you really want to remove this pokemon from favorites?",
-  confirmRemoveCancel = "Cancel",
-  confirmRemoveConfirm = "Remove",
-}: FavoriteCardProps) {
+const FavoriteCard = ({ id, name, displayName, onRemove }: Props) => {
+  const { t, locale } = useTranslation();
   const [open, setOpen] = useState(false);
+  const removeLabel = t("favorites.remove");
 
   function handleConfirm() {
     setOpen(false);
@@ -54,26 +41,28 @@ export function FavoriteCard({
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent closeLabel={confirmRemoveCancel}>
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{removeLabel}</DialogTitle>
-            <DialogDescription>{confirmRemove}</DialogDescription>
+            <DialogDescription>{t("favorites.confirmRemove")}</DialogDescription>
           </DialogHeader>
           <div className="flex justify-end gap-3 mt-4">
             <DialogClose asChild>
               <button className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground hover:bg-muted transition-colors">
-                {confirmRemoveCancel}
+                {t("favorites.confirmRemoveCancel")}
               </button>
             </DialogClose>
             <button
               onClick={handleConfirm}
               className="rounded-lg bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 transition-colors"
             >
-              {confirmRemoveConfirm}
+              {t("favorites.confirmRemoveConfirm")}
             </button>
           </div>
         </DialogContent>
       </Dialog>
     </div>
   );
-}
+};
+
+export { FavoriteCard };

@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PokemonMoves } from "../index";
-import type { MoveModalLabels } from "@/components/MoveModal";
+
+let mockLang = "en";
+jest.mock("next/navigation", () => ({ useParams: () => ({ lang: mockLang }) }));
 
 jest.mock("@/components/MoveModal", () => ({
   MoveModal: ({ moveName, onClose }: { moveName: string; onClose: () => void }) => (
@@ -12,31 +14,39 @@ jest.mock("@/components/MoveModal", () => ({
   ),
 }));
 
-const labels = {} as MoveModalLabels;
 const moves = [
-  { move: { name: "thunderbolt", url: "" }, version_group_details: [] },
-  { move: { name: "quick-attack", url: "" }, version_group_details: [] },
+  { move: { name: "ember", url: "" }, version_group_details: [] },
+  { move: { name: "fire-blast", url: "" }, version_group_details: [] },
 ];
 
 describe("PokemonMoves", () => {
-  it("renders the title and one badge per move", () => {
-    render(<PokemonMoves moves={moves} title="Moves (2)" moveModalLabels={labels} />);
+  beforeEach(() => {
+    mockLang = "en";
+  });
+
+  it("renders the localized title with the move count and one button per move", () => {
+    render(<PokemonMoves moves={moves} />);
     expect(screen.getByRole("heading", { name: "Moves (2)" })).toBeInTheDocument();
-    expect(screen.getByText("Thunderbolt")).toBeInTheDocument();
-    expect(screen.getByText("Quick Attack")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ember" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Fire Blast" })).toBeInTheDocument();
   });
 
-  it("opens the move modal when a move is clicked", async () => {
-    render(<PokemonMoves moves={moves} title="Moves" moveModalLabels={labels} />);
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    await userEvent.click(screen.getByText("Thunderbolt"));
-    expect(screen.getByRole("dialog")).toHaveTextContent("thunderbolt");
+  it("translates the title for the given locale", () => {
+    mockLang = "de";
+    render(<PokemonMoves moves={moves} />);
+    expect(screen.getByRole("heading", { name: "Attacken (2)" })).toBeInTheDocument();
   });
 
-  it("closes the modal via onClose", async () => {
-    render(<PokemonMoves moves={moves} title="Moves" moveModalLabels={labels} />);
-    await userEvent.click(screen.getByText("Thunderbolt"));
+  it("opens and closes the move modal", async () => {
+    render(<PokemonMoves moves={moves} />);
+    await userEvent.click(screen.getByRole("button", { name: "Ember" }));
+    expect(screen.getByRole("dialog")).toHaveTextContent("ember");
     await userEvent.click(screen.getByText("close-modal"));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("renders an empty move list section", () => {
+    render(<PokemonMoves moves={[]} />);
+    expect(screen.getByRole("heading", { name: "Moves (0)" })).toBeInTheDocument();
   });
 });

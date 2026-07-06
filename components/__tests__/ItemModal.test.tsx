@@ -1,11 +1,14 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ItemModal, type ItemModalLabels } from "../ItemModal";
+import { ItemModal } from "../ItemModal";
 import { fetchItem } from "@/lib/api/items";
 import { fetchItemCategory } from "@/lib/api/categories";
 import type { Item, ItemCategory } from "@/types/item";
 
+jest.mock("next/navigation", () => ({
+  useParams: () => ({ lang: "en" }),
+}));
 jest.mock("@/lib/api/items", () => ({ fetchItem: jest.fn() }));
 jest.mock("@/lib/api/categories", () => ({ fetchItemCategory: jest.fn() }));
 jest.mock("@/components/LazyImage", () => ({
@@ -17,15 +20,6 @@ jest.mock("@/components/LazyImage", () => ({
 
 const fetchItemMock = fetchItem as jest.Mock;
 const fetchCategoryMock = fetchItemCategory as jest.Mock;
-
-const labels: ItemModalLabels = {
-  cost: "Cost",
-  category: "Category",
-  noDescription: "No description available.",
-  errorDefault: "Something went wrong",
-  empty: "—",
-  close: "Close",
-};
 
 const item: Item = {
   id: 4,
@@ -50,7 +44,7 @@ function renderModal(onClose = jest.fn()) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <ItemModal itemName="poke-ball" onClose={onClose} labels={labels} />
+      <ItemModal itemName="poke-ball" onClose={onClose} />
     </QueryClientProvider>,
   );
   return onClose;

@@ -1,18 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { LOCALES } from "@/lib/constants";
 import { setLocaleCookie } from "@/lib/locale-cookie";
 import type { Locale } from "@/lib/constants";
+import { useLocale } from "@/hooks/useLocale";
 
-interface LanguageSwitcherProps {
-  locale: Locale;
-}
-
-export function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
+const LanguageSwitcher = () => {
+  const locale = useLocale();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +42,8 @@ export function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
       new RegExp(`^/${locale}(?=/|$)`),
       `/${lang}`,
     );
-    router.push(newPath);
+    const qs = searchParams.toString();
+    router.push(qs ? `${newPath}?${qs}` : newPath);
   }
 
   return (
@@ -95,4 +95,6 @@ export function LanguageSwitcher({ locale }: LanguageSwitcherProps) {
       )}
     </div>
   );
-}
+};
+
+export { LanguageSwitcher };

@@ -1,47 +1,48 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { capitalize } from "@/lib/pokeapi";
 import { getLocalizedName } from "@/lib/locale";
 import { Pagination } from "@/components/pagination";
 import { LoadingState } from "@/components/LoadingState";
 import { ErrorState } from "@/components/ErrorState";
-import { ItemModal, type ItemModalLabels } from "@/components/ItemModal";
+import { ItemModal } from "@/components/ItemModal";
 import { LazyImage } from "@/components/LazyImage";
-import { DEFAULT_LOCALE, ITEM_LIST_PAGE_SIZE } from "@/lib/constants";
-import { usePaginationUrl } from "@/hooks/usePaginationUrl";
+import { ITEM_LIST_PAGE_SIZE } from "@/lib/constants";
+import { usePagination } from "@/hooks/usePagination";
 import { useItemListQuery } from "@/app/[lang]/items/hooks/useItemListQuery";
 import { fetchItem } from "@/lib/api/items";
-import type { Locale } from "@/lib/constants";
-
-interface ListLabels {
-  previous: string;
-  next: string;
-  pageOfTotalPattern: string;
-  pagination: string;
-  loading: string;
-  errorDefault: string;
-}
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Props {
-  itemModalLabels: ItemModalLabels;
-  listLabels: ListLabels;
-  locale?: Locale;
+  initialPage: number;
 }
 
-export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: Props) {
-  const [page, setPage] = usePaginationUrl();
+const ItemListClient = ({ initialPage }: Props) => {
+  const { locale, t } = useTranslation();
+  const {
+    page,
+    effectivePage,
+    totalPages,
+    goToPrevious,
+    goToNext,
+    setPage,
+    syncCount,
+  } = usePagination({ pageSize: ITEM_LIST_PAGE_SIZE, initialPage });
   const [openItem, setOpenItem] = useState<string | null>(null);
 
   const { data, isLoading, isError, error } = useItemListQuery({ page });
+
+  useEffect(() => {
+    syncCount(data?.count);
+  }, [data?.count, syncCount]);
 
   const slugs = data?.results.map((i) => i.name) ?? [];
 
   // Item details provide the real sprite URL (the filename can't be derived
   // from the slug, e.g. tm01 -> tm-normal.png) and localized display names.
   // They share the ["item", name] cache with the modal, so opening it is instant.
-  const needsLocalization = locale !== DEFAULT_LOCALE;
   const itemQueries = useQueries({
     queries: slugs.map((name) => ({
       queryKey: ["item", name],
@@ -50,23 +51,8 @@ export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: P
     })),
   });
 
-  const totalPages = data ? Math.ceil(data.count / ITEM_LIST_PAGE_SIZE) : 1;
-
-  const paginationLabels = useMemo(
-    () => ({
-      previous: listLabels.previous,
-      next: listLabels.next,
-      pageOfTotal: (pg: number, total: number) =>
-        listLabels.pageOfTotalPattern
-          .replace("{page}", String(pg))
-          .replace("{total}", String(total)),
-      pagination: listLabels.pagination,
-    }),
-    [listLabels],
-  );
-
   function getDisplayName(slug: string, index: number) {
-    const itemData = needsLocalization ? itemQueries[index]?.data : undefined;
+    const itemData = itemQueries[index]?.data;
     if (itemData) return getLocalizedName(itemData.names, locale, capitalize(slug));
     return capitalize(slug);
   }
@@ -77,14 +63,12 @@ export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: P
         <ItemModal
           itemName={openItem}
           onClose={() => setOpenItem(null)}
-          labels={itemModalLabels}
-          locale={locale}
         />
       )}
 
-      {isLoading && <LoadingState variant="inline" loadingText={listLabels.loading} />}
+      {isLoading && <LoadingState variant="inline" />}
       {isError && (
-        <ErrorState message={error instanceof Error ? error.message : listLabels.errorDefault} />
+        <ErrorState message={error instanceof Error ? error.message : t("common.errorDefault")} />
       )}
 
       {data && (
@@ -122,18 +106,19 @@ export function ItemListClient({ itemModalLabels, listLabels, locale = "en" }: P
 
           <div className="mt-10 flex justify-center">
             <Pagination
-              page={page}
+              page={effectivePage}
               totalPages={totalPages}
               hasPrevious={!!data.previous}
               hasNext={!!data.next}
-              onPrevious={() => setPage(Math.max(1, page - 1))}
-              onNext={() => setPage(page + 1)}
+              onPrevious={goToPrevious}
+              onNext={goToNext}
               onPageChange={setPage}
-              labels={paginationLabels}
             />
           </div>
         </>
       )}
     </>
   );
-}
+};
+
+export { ItemListClient };

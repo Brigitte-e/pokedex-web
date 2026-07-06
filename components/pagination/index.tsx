@@ -1,15 +1,11 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { getVisiblePages } from "./pagination";
 import { cn } from "@/lib/utils/cn";
+import { useTranslation } from "@/hooks/useTranslation";
 
-interface PaginationLabels {
-  previous: string;
-  next: string;
-  pageOfTotal: (page: number, total: number) => string;
-  pagination: string;
-}
-
-export interface PaginationProps {
+interface Props {
   page: number;
   totalPages: number;
   hasPrevious: boolean;
@@ -17,17 +13,9 @@ export interface PaginationProps {
   onPrevious: () => void;
   onNext: () => void;
   onPageChange: (page: number) => void;
-  labels?: PaginationLabels;
 }
 
-const defaultLabels: PaginationLabels = {
-  previous: "← Previous",
-  next: "Next →",
-  pageOfTotal: (page, total) => `${page} / ${total}`,
-  pagination: "Pagination",
-};
-
-export function Pagination({
+const Pagination = ({
   page,
   totalPages,
   hasPrevious,
@@ -35,15 +23,16 @@ export function Pagination({
   onPrevious,
   onNext,
   onPageChange,
-  labels = defaultLabels,
-}: PaginationProps) {
+}: Props) => {
+  const { t } = useTranslation();
+
   if (totalPages <= 1) return null;
 
   const visiblePages = getVisiblePages(page, totalPages);
 
   return (
     <nav
-      aria-label={labels.pagination}
+      aria-label={t("common.pagination")}
       className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-center sm:gap-2"
     >
       <Button
@@ -51,18 +40,18 @@ export function Pagination({
         size="sm"
         onClick={onPrevious}
         disabled={!hasPrevious}
-        aria-label={labels.previous}
+        aria-label={t("common.previous")}
         className="shrink-0 px-2.5 sm:px-3"
       >
         <span className="sm:hidden">←</span>
-        <span className="hidden sm:inline">{labels.previous}</span>
+        <span className="hidden sm:inline">{t("common.previous")}</span>
       </Button>
 
       <p
         className="shrink-0 text-sm font-medium tabular-nums text-foreground sm:hidden"
         aria-current="page"
       >
-        {labels.pageOfTotal(page, totalPages)}
+        {t("common.pageOfTotal", { page, total: totalPages })}
       </p>
 
       <div className="hidden items-center gap-1 sm:flex">
@@ -106,12 +95,14 @@ export function Pagination({
         size="sm"
         onClick={onNext}
         disabled={!hasNext}
-        aria-label={labels.next}
+        aria-label={t("common.next")}
         className="shrink-0 px-2.5 sm:px-3"
       >
         <span className="sm:hidden">→</span>
-        <span className="hidden sm:inline">{labels.next}</span>
+        <span className="hidden sm:inline">{t("common.next")}</span>
       </Button>
     </nav>
   );
-}
+};
+
+export { Pagination };

@@ -25,7 +25,8 @@
     "next": "Next →",
     "pageOfTotal": "{page} / {total}",
     "pagination": "Pagination",
-    "noDescription": "No description available."
+    "noDescription": "No description available.",
+    "apply": "Apply"
   },
   "favorites": {
     "add": "Add to favorites",
@@ -193,5 +194,13 @@
     "fallbackName": "Trainer",
     "signOut": "Sign out",
     "signOutError": "Sign out failed."
+  },
+  "error": {
+    "title": "Something went wrong.",
+    "retry": "Try again"
+  },
+  "notFound": {
+    "title": "Page not found.",
+    "home": "Back to Pokédex"
   }
 }

@@ -1,15 +1,27 @@
+"use client";
+
 import Link from "next/link";
 import { ReactNode } from "react";
+import { useTranslation } from "@/hooks/useTranslation";
 
 interface Props {
-  title: string;
-  subtitle?: string;
+  titleKey?: string;
+  subtitleKey?: string;
+  subtitleParams?: Record<string, string | number>;
   backHref?: string;
-  backLabel?: string;
+  backLabelKey?: string;
   rightSlot?: ReactNode;
 }
 
-export function PageHeader({ title, subtitle, backHref, backLabel = "Back", rightSlot }: Props) {
+const PageHeader = ({
+  titleKey,
+  subtitleKey,
+  subtitleParams,
+  backHref,
+  backLabelKey = "common.back",
+  rightSlot,
+}: Props) => {
+  const { t } = useTranslation();
   return (
     <div className="mb-8">
       {backHref && (
@@ -17,18 +29,26 @@ export function PageHeader({ title, subtitle, backHref, backLabel = "Back", righ
           href={backHref}
           className="inline-flex items-center gap-1 text-sm font-medium text-pk-yellow/60 hover:text-pk-yellow transition-colors mb-4"
         >
-          ← {backLabel}
+          ← {t(backLabelKey)}
         </Link>
       )}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-pk-yellow tracking-tight">{title}</h1>
-          {subtitle && (
-            <p className="text-muted-foreground mt-1 text-sm">{subtitle}</p>
+          {titleKey && (
+            <h1 className="text-3xl font-bold text-pk-yellow tracking-tight">
+              {t(titleKey)}
+            </h1>
+          )}
+          {subtitleKey && (
+            <p className="text-muted-foreground mt-1 text-sm">
+              {t(subtitleKey, subtitleParams)}
+            </p>
           )}
         </div>
         {rightSlot && <div className="flex-shrink-0">{rightSlot}</div>}
       </div>
     </div>
   );
-}
+};
+
+export { PageHeader };

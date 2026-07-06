@@ -1,9 +1,7 @@
 import { POKE_SPRITES_BASE_URL } from "@/lib/constants";
 
-export function getPokemonSprite(nameOrId: string | number): string {
-  const id = typeof nameOrId === "number" ? nameOrId : parseInt(nameOrId, 10);
-  const segment = !isNaN(id) ? id : nameOrId;
-  return `${POKE_SPRITES_BASE_URL}/pokemon/other/official-artwork/${segment}.png`;
+export function getPokemonSprite(id: number): string {
+  return `${POKE_SPRITES_BASE_URL}/pokemon/other/official-artwork/${id}.png`;
 }
 
 export function getIdFromUrl(url: string): number {

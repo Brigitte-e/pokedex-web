@@ -3,20 +3,18 @@
 import { useState } from "react";
 import { capitalize } from "@/lib/pokeapi";
 import { Badge } from "@/components/ui/badge";
-import { MoveModal, type MoveModalLabels } from "@/components/MoveModal";
+import { MoveModal } from "@/components/MoveModal";
+import { useTranslation } from "@/hooks/useTranslation";
 import type { MoveEntry } from "@/types";
-import type { Locale } from "@/lib/constants";
 
 interface Props {
   moves: MoveEntry[];
-  title: string;
-  moveModalLabels: MoveModalLabels;
-  locale?: Locale;
 }
 
 // Badges show the capitalized slug; localized names load in the modal on demand
 // to avoid one request per move (a pokemon can have 100+ moves).
-export function PokemonMoves({ moves, title, moveModalLabels, locale = "en" }: Props) {
+const PokemonMoves = ({ moves }: Props) => {
+  const { t } = useTranslation();
   const [selectedMove, setSelectedMove] = useState<string | null>(null);
 
   return (
@@ -25,13 +23,11 @@ export function PokemonMoves({ moves, title, moveModalLabels, locale = "en" }: P
         <MoveModal
           moveName={selectedMove}
           onClose={() => setSelectedMove(null)}
-          labels={moveModalLabels}
-          locale={locale}
         />
       )}
       <section className="rounded-2xl border border-border bg-card p-6">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60 mb-3">
-          {title}
+          {t("pokemonDetail.moves", { count: moves.length })}
         </h2>
         <div className="flex flex-wrap gap-2 max-h-50 overflow-y-auto">
           {moves.map(({ move }) => (
@@ -49,4 +45,6 @@ export function PokemonMoves({ moves, title, moveModalLabels, locale = "en" }: P
       </section>
     </>
   );
-}
+};
+
+export { PokemonMoves };

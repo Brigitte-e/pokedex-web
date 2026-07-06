@@ -2,6 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FavoriteCard } from "../FavoriteCard";
 
+jest.mock("next/navigation", () => ({
+  useParams: () => ({ lang: "en" }),
+}));
+
 jest.mock("@/components/LazyImage", () => ({
   LazyImage: ({ src, alt }: { src: string; alt: string }) => (
     // eslint-disable-next-line @next/next/no-img-element
@@ -12,12 +16,8 @@ jest.mock("@/components/LazyImage", () => ({
 const defaultProps = {
   id: 25,
   name: "pikachu",
-  locale: "en" as const,
+  displayName: "Pikachu",
   onRemove: jest.fn(),
-  removeLabel: "Remove from favorites",
-  confirmRemove: "Do you really want to remove this pokemon from favorites?",
-  confirmRemoveCancel: "Cancel",
-  confirmRemoveConfirm: "Remove",
 };
 
 describe("FavoriteCard", () => {
@@ -31,7 +31,7 @@ describe("FavoriteCard", () => {
   });
 
   it("falls back to default labels when none are provided", async () => {
-    render(<FavoriteCard id={25} name="pikachu" locale="en" onRemove={jest.fn()} />);
+    render(<FavoriteCard id={25} name="pikachu" onRemove={jest.fn()} />);
     await userEvent.click(screen.getByRole("button", { name: "Remove from favorites" }));
     expect(
       screen.getByText("Do you really want to remove this pokemon from favorites?"),

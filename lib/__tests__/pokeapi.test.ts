@@ -7,18 +7,6 @@ describe("getPokemonSprite", () => {
       `${POKE_SPRITES_BASE_URL}/pokemon/other/official-artwork/25.png`,
     );
   });
-
-  it("builds the sprite URL from a numeric string", () => {
-    expect(getPokemonSprite("25")).toBe(
-      `${POKE_SPRITES_BASE_URL}/pokemon/other/official-artwork/25.png`,
-    );
-  });
-
-  it("keeps a non-numeric name as the segment", () => {
-    expect(getPokemonSprite("pikachu")).toBe(
-      `${POKE_SPRITES_BASE_URL}/pokemon/other/official-artwork/pikachu.png`,
-    );
-  });
 });
 
 describe("getIdFromUrl", () => {

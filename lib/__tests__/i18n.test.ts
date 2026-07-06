@@ -1,6 +1,7 @@
 jest.mock("server-only", () => ({}), { virtual: true });
 
-import { t, formatGenerationLabel, getDictionary } from "../i18n";
+import { t } from "../i18n/core";
+import { getDictionary } from "../i18n";
 import en from "@/messages/en.json";
 
 describe("t", () => {
@@ -18,12 +19,6 @@ describe("t", () => {
 
   it("replaces repeated placeholders", () => {
     expect(t(en, "favorites.savedCount", { count: 3 })).toBe("3 saved Pokémon");
-  });
-});
-
-describe("formatGenerationLabel", () => {
-  it("formats a generation slug into a label", () => {
-    expect(formatGenerationLabel(en, "generation-iv")).toBe("Generation IV");
   });
 });
 

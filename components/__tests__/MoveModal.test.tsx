@@ -1,27 +1,19 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { MoveModal, type MoveModalLabels } from "../MoveModal";
+import { MoveModal } from "../MoveModal";
 import { fetchMove } from "@/lib/api/moves";
 import { fetchType } from "@/lib/api/types";
 import type { Move } from "@/types/move";
 
+jest.mock("next/navigation", () => ({
+  useParams: () => ({ lang: "en" }),
+}));
 jest.mock("@/lib/api/moves", () => ({ fetchMove: jest.fn() }));
 jest.mock("@/lib/api/types", () => ({ fetchType: jest.fn() }));
 
 const fetchMoveMock = fetchMove as jest.Mock;
 const fetchTypeMock = fetchType as jest.Mock;
-
-const labels: MoveModalLabels = {
-  power: "Power",
-  accuracy: "Accuracy",
-  pp: "PP",
-  noDescription: "No description available.",
-  errorDefault: "Something went wrong",
-  empty: "—",
-  close: "Close",
-  damageClassNames: { special: "Special" },
-};
 
 const move: Move = {
   id: 85,
@@ -46,7 +38,7 @@ function renderModal(onClose = jest.fn()) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <MoveModal moveName="thunderbolt" onClose={onClose} labels={labels} />
+      <MoveModal moveName="thunderbolt" onClose={onClose} />
     </QueryClientProvider>,
   );
   return onClose;

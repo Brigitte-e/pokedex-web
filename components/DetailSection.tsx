@@ -1,12 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 
-export interface DetailSectionProps {
+interface Props {
   title: string;
   items: string[];
   emptyText?: string;
 }
 
-export function DetailSection({ title, items, emptyText = "—" }: DetailSectionProps) {
+const DetailSection = ({ title, items, emptyText = "—" }: Props) => {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-xs font-semibold uppercase tracking-widest text-pk-yellow/60">
@@ -25,4 +25,6 @@ export function DetailSection({ title, items, emptyText = "—" }: DetailSection
       )}
     </div>
   );
-}
+};
+
+export { DetailSection };

@@ -10,7 +10,7 @@ interface Props {
   locale: Locale;
 }
 
-export function TypeGrid({ types, locale }: Props) {
+const TypeGrid = ({ types, locale }: Props) => {
   return (
     <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
       {types.map((type) => {
@@ -30,4 +30,6 @@ export function TypeGrid({ types, locale }: Props) {
       })}
     </ul>
   );
-}
+};
+
+export { TypeGrid };

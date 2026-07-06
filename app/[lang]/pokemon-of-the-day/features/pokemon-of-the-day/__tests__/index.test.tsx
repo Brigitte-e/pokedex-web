@@ -33,21 +33,8 @@ const pokemon: PokemonOfTheDayData = {
   weight: 60,
 };
 
-const labels = {
-  mystery: "???",
-  mysteryType: "?????",
-  viewDetails: "View details",
-  reveal: "Reveal today's Pokémon",
-  height: "Height",
-  weight: "Weight",
-  heightUnit: " m",
-  weightUnit: " kg",
-  addFavorite: "Add to favorites",
-  removeFavorite: "Remove from favorites",
-};
-
 function renderCard(dayKey = "20000") {
-  render(<PokemonOfTheDayClient pokemon={pokemon} dayKey={dayKey} labels={labels} locale="en" />);
+  render(<PokemonOfTheDayClient pokemon={pokemon} dayKey={dayKey} locale="en" />);
 }
 
 describe("PokemonOfTheDayClient", () => {

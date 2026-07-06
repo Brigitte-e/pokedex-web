@@ -7,20 +7,7 @@ import { DEFAULT_TYPE_COLOR, TYPE_COLORS } from "@/lib/constants";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { usePokemonOfTheDayStore } from "@/store/pokemon-of-the-day";
 import { PokemonOfTheDayCardSkeleton } from "./PokemonOfTheDaySkeleton";
-import type { Locale } from "@/lib/constants";
-
-interface PokemonOfTheDayLabels {
-  mystery: string;
-  mysteryType: string;
-  viewDetails: string;
-  reveal: string;
-  height: string;
-  weight: string;
-  heightUnit: string;
-  weightUnit: string;
-  addFavorite: string;
-  removeFavorite: string;
-}
+import { useTranslation } from "@/hooks/useTranslation";
 
 export interface PokemonOfTheDayData {
   id: number;
@@ -36,11 +23,10 @@ interface Props {
   pokemon: PokemonOfTheDayData;
   /** UTC day key of the server pick; a stored reveal only counts if it matches. */
   dayKey: string;
-  labels: PokemonOfTheDayLabels;
-  locale: Locale;
 }
 
-export function PokemonOfTheDayClient({ pokemon, dayKey, labels, locale }: Props) {
+const PokemonOfTheDayClient = ({ pokemon, dayKey }: Props) => {
+  const { locale, t } = useTranslation();
   const revealedDayKey = usePokemonOfTheDayStore((s) => s.revealedDayKey);
   const hydrated = usePokemonOfTheDayStore((s) => s.hydrated);
   const revealDay = usePokemonOfTheDayStore((s) => s.reveal);
@@ -62,12 +48,7 @@ export function PokemonOfTheDayClient({ pokemon, dayKey, labels, locale }: Props
     <div className="relative flex flex-col items-center gap-4 rounded-3xl border border-border bg-card p-8 shadow-md w-full max-w-sm">
       {revealed && (
         <div className="absolute top-4 right-4">
-          <FavoriteButton
-            id={pokemon.id}
-            name={pokemon.name}
-            addLabel={labels.addFavorite}
-            removeLabel={labels.removeFavorite}
-          />
+          <FavoriteButton id={pokemon.id} name={pokemon.name} />
         </div>
       )}
 
@@ -88,7 +69,7 @@ export function PokemonOfTheDayClient({ pokemon, dayKey, labels, locale }: Props
       )}
 
       <h2 className="text-2xl font-bold">
-        {revealed ? pokemon.localizedName : labels.mystery}
+        {revealed ? pokemon.localizedName : t("pokemonOfTheDay.mystery")}
       </h2>
 
       <div className="flex gap-2">
@@ -104,19 +85,19 @@ export function PokemonOfTheDayClient({ pokemon, dayKey, labels, locale }: Props
           ))
         ) : (
           <span className="rounded-full px-3 py-1 text-xs font-bold uppercase bg-muted text-muted-foreground">
-            {labels.mysteryType}
+            {t("pokemonOfTheDay.mysteryType")}
           </span>
         )}
       </div>
 
       <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm text-muted-foreground mt-2">
-        <span>{labels.height}</span>
+        <span>{t("pokemonDetail.height")}</span>
         <span className="text-foreground font-medium">
-          {revealed ? `${(pokemon.height / 10).toFixed(1)}${labels.heightUnit}` : "? m"}
+          {revealed ? `${(pokemon.height / 10).toFixed(1)}${t("pokemonDetail.heightUnit")}` : "? m"}
         </span>
-        <span>{labels.weight}</span>
+        <span>{t("pokemonDetail.weight")}</span>
         <span className="text-foreground font-medium">
-          {revealed ? `${(pokemon.weight / 10).toFixed(1)}${labels.weightUnit}` : "? kg"}
+          {revealed ? `${(pokemon.weight / 10).toFixed(1)}${t("pokemonDetail.weightUnit")}` : "? kg"}
         </span>
       </div>
 
@@ -125,16 +106,18 @@ export function PokemonOfTheDayClient({ pokemon, dayKey, labels, locale }: Props
           href={`/${locale}/pokemon/${pokemon.name}`}
           className="mt-2 rounded-xl bg-pk-yellow/20 px-5 py-2 text-sm font-semibold text-pk-yellow hover:bg-pk-yellow/30 transition"
         >
-          {labels.viewDetails}
+          {t("pokemonOfTheDay.viewDetails")}
         </Link>
       ) : (
         <button
           onClick={() => revealDay(dayKey)}
           className="mt-2 rounded-2xl bg-pk-red px-8 py-3 text-base font-bold text-white shadow-lg transition hover:brightness-110"
         >
-          {labels.reveal}
+          {t("pokemonOfTheDay.reveal")}
         </button>
       )}
     </div>
   );
-}
+};
+
+export { PokemonOfTheDayClient };

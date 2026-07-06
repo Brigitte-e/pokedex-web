@@ -3,7 +3,10 @@ import { AuthButton } from "../AuthButton";
 import { useAuthStore } from "@/store/auth";
 import type { User } from "firebase/auth";
 
-const defaultProps = { locale: "en", loginLabel: "Log in", profileLabel: "Profile" };
+jest.mock("next/navigation", () => ({
+  useParams: () => ({ lang: "en" }),
+}));
+
 
 describe("AuthButton", () => {
   beforeEach(() => {
@@ -12,13 +15,13 @@ describe("AuthButton", () => {
 
   it("renders a placeholder while auth is loading", () => {
     useAuthStore.setState({ user: null, loading: true });
-    const { container } = render(<AuthButton {...defaultProps} />);
+    const { container } = render(<AuthButton />);
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
   });
 
   it("renders a login link when signed out", () => {
-    render(<AuthButton {...defaultProps} />);
+    render(<AuthButton />);
     const link = screen.getByRole("link", { name: "Log in" });
     expect(link).toHaveAttribute("href", "/en/login");
   });
@@ -28,7 +31,7 @@ describe("AuthButton", () => {
       user: { displayName: "Ash Ketchum", email: "ash@example.com", photoURL: null } as User,
       loading: false,
     });
-    render(<AuthButton {...defaultProps} />);
+    render(<AuthButton />);
     const link = screen.getByRole("link", { name: "Profile" });
     expect(link).toHaveAttribute("href", "/en/profile");
     expect(link).toHaveTextContent("AK");
@@ -39,7 +42,7 @@ describe("AuthButton", () => {
       user: { displayName: null, email: "misty@example.com", photoURL: null } as User,
       loading: false,
     });
-    render(<AuthButton {...defaultProps} />);
+    render(<AuthButton />);
     expect(screen.getByRole("link", { name: "Profile" })).toHaveTextContent("M");
   });
 
@@ -52,7 +55,7 @@ describe("AuthButton", () => {
       } as User,
       loading: false,
     });
-    render(<AuthButton {...defaultProps} />);
+    render(<AuthButton />);
     expect(screen.getByRole("img", { name: "Ash Ketchum" })).toHaveAttribute(
       "src",
       "https://example.com/avatar.png",

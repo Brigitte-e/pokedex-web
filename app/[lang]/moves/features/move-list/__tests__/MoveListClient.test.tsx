@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MoveListClient } from "../MoveListClient";
 import { fetchMoveList, fetchMove } from "@/lib/api/moves";
 import { MOVE_LIST_PAGE_SIZE } from "@/lib/constants";
-import type { MoveModalLabels } from "@/components/MoveModal";
 
 jest.mock("@/lib/api/moves", () => ({ fetchMoveList: jest.fn(), fetchMove: jest.fn() }));
 jest.mock("@/lib/api/types", () => ({ fetchType: jest.fn().mockResolvedValue(null) }));
@@ -15,29 +14,11 @@ jest.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mockReplace }),
   usePathname: () => "/en/moves",
   useSearchParams: () => mockSearchParams,
+  useParams: () => ({ lang: "en" }),
 }));
 
 const fetchMoveListMock = fetchMoveList as jest.Mock;
 const fetchMoveMock = fetchMove as jest.Mock;
-
-const moveModalLabels: MoveModalLabels = {
-  power: "Power",
-  accuracy: "Accuracy",
-  pp: "PP",
-  noDescription: "No description available.",
-  errorDefault: "Something went wrong",
-  empty: "—",
-  close: "Close",
-};
-
-const listLabels = {
-  previous: "← Previous",
-  next: "Next →",
-  pageOfTotalPattern: "{page} / {total}",
-  pagination: "Pagination",
-  loading: "Loading…",
-  errorDefault: "Something went wrong",
-};
 
 const list = {
   count: MOVE_LIST_PAGE_SIZE * 2,
@@ -53,7 +34,7 @@ function renderList() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <MoveListClient moveModalLabels={moveModalLabels} listLabels={listLabels} />
+      <MoveListClient locale="en" />
     </QueryClientProvider>,
   );
 }
@@ -110,6 +91,6 @@ describe("MoveListClient", () => {
     renderList();
     await screen.findByRole("button", { name: "Thunderbolt" });
     await userEvent.click(screen.getByRole("button", { name: "Next →" }));
-    expect(mockReplace).toHaveBeenCalledWith("/en/moves?page=2", { scroll: false });
+    expect(window.location.pathname + window.location.search).toBe("/en/moves?page=2");
   });
 });

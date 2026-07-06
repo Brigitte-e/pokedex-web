@@ -9,7 +9,11 @@ import { useAuthStore } from "@/store/auth";
 // to simulate a signed-in user without a real Firebase session.
 type E2EWindow = Window & { Cypress?: unknown; __E2E_USER__?: User | null };
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+interface Props {
+  children: React.ReactNode;
+}
+
+const AuthProvider = ({ children }: Props) => {
   const setAuth = useAuthStore((s) => s.setAuth);
 
   useEffect(() => {
@@ -27,4 +31,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [setAuth]);
 
   return <>{children}</>;
-}
+};
+
+export { AuthProvider };
