@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PokemonList } from "../PokemonList";
 import { fetchPokemonList } from "@/lib/api/pokemon";
+import { fetchPokemonSpecies } from "@/lib/api/species";
 import { fetchType } from "@/lib/api/types";
 import { fetchGeneration } from "@/lib/api/generations";
 import { POKEMON_LIST_PAGE_SIZE } from "@/lib/constants";
@@ -28,6 +29,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 const fetchPokemonListMock = fetchPokemonList as jest.Mock;
+const fetchPokemonSpeciesMock = fetchPokemonSpecies as jest.Mock;
 const fetchTypeMock = fetchType as jest.Mock;
 const fetchGenerationMock = fetchGeneration as jest.Mock;
 
@@ -56,7 +58,11 @@ describe("PokemonList", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockSearchParams = new URLSearchParams();
+    window.scrollTo = jest.fn();
     fetchPokemonListMock.mockResolvedValue(listResponse);
+    fetchPokemonSpeciesMock.mockImplementation((name: string) =>
+      Promise.resolve({ name, names: [] }),
+    );
   });
 
   describe("unfiltered", () => {

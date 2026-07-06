@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PokemonFiltersFeature } from "../index";
-import { fetchTypeList } from "@/lib/api/types";
+import { fetchTypeList, fetchType } from "@/lib/api/types";
 import { fetchGenerationList } from "@/lib/api/generations";
 
 jest.mock("@/lib/api/types", () => ({ fetchTypeList: jest.fn(), fetchType: jest.fn() }));
@@ -19,6 +19,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 const fetchTypeListMock = fetchTypeList as jest.Mock;
+const fetchTypeMock = fetchType as jest.Mock;
 const fetchGenerationListMock = fetchGenerationList as jest.Mock;
 
 function renderFilters(searchParams: URLSearchParams = new URLSearchParams()) {
@@ -54,6 +55,16 @@ describe("PokemonFiltersFeature", () => {
         { name: "generation-i", url: "https://pokeapi.co/api/v2/generation/1/" },
       ],
     });
+    fetchTypeMock.mockImplementation((name: string) =>
+      Promise.resolve({
+        names: [
+          {
+            name: name.charAt(0).toUpperCase() + name.slice(1),
+            language: { name: "en", url: "" },
+          },
+        ],
+      }),
+    );
   });
 
   it("renders the page title and both filters", async () => {

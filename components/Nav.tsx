@@ -1,10 +1,12 @@
 "use client";
 
+import { Suspense } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { AuthButton } from "@/components/AuthButton";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/store/auth";
 import { useTranslation } from "@/hooks/useTranslation";
 
@@ -58,7 +60,9 @@ const Nav = () => {
           })}
         </nav>
 
-        <LanguageSwitcher />
+        <Suspense fallback={<Skeleton className="h-7 w-14 shrink-0 rounded-md" />}>
+          <LanguageSwitcher />
+        </Suspense>
 
         <AuthButton />
       </div>
