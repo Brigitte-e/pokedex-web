@@ -1,9 +1,3 @@
-export function parsePageParam(page?: string | string[]): number {
-  const raw = Array.isArray(page) ? page[0] : page;
-  const parsed = Number.parseInt(raw ?? "", 10);
-  return Number.isFinite(parsed) && parsed >= 1 ? parsed : 1;
-}
-
 export type PageItem = number | "ellipsis";
 
 export function getVisiblePages(current: number, totalPages: number): PageItem[] {

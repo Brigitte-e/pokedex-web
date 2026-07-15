@@ -11,7 +11,7 @@ describe("PageHeader", () => {
 
   it("renders the localized title as a heading", () => {
     render(<PageHeader titleKey="pages.pokedex.title" />);
-    expect(screen.getByRole("heading", { level: 1, name: "Pokédex" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Pokémon" })).toBeInTheDocument();
   });
 
   it("renders the localized subtitle when provided", () => {
@@ -31,20 +31,19 @@ describe("PageHeader", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Favoriten" })).toBeInTheDocument();
   });
 
-  it("renders a localized back link when backHref is provided", () => {
-    render(
-      <PageHeader
-        backHref="/en/pokemon"
-        backLabelKey="pokemonDetail.backToPokedex"
-      />,
-    );
-    const link = screen.getByRole("link", { name: /Back to Pokédex/ });
+  it("renders a back link when backHref is provided", () => {
+    render(<PageHeader backHref="/en/pokemon" />);
+    const link = screen.getByRole("link", { name: /Back/ });
     expect(link).toHaveAttribute("href", "/en/pokemon");
   });
 
-  it("falls back to the common back label", () => {
-    render(<PageHeader backHref="/en/pokemon" />);
-    expect(screen.getByRole("link", { name: /Back/ })).toBeInTheDocument();
+  it("localizes the back link label", () => {
+    mockLang = "de";
+    render(<PageHeader backHref="/de/pokemon" />);
+    expect(screen.getByRole("link", { name: /Zurück/ })).toHaveAttribute(
+      "href",
+      "/de/pokemon",
+    );
   });
 
   it("omits the back link without backHref", () => {

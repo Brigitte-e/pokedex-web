@@ -1,20 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { capitalize } from "@/lib/pokeapi";
-import { Badge } from "@/components/ui/badge";
 import { MoveModal } from "@/components/MoveModal";
 import { useTranslation } from "@/hooks/useTranslation";
+import { MoveBadge } from "./MoveBadge";
 import type { MoveEntry } from "@/types";
 
 interface Props {
   moves: MoveEntry[];
 }
 
-// Badges show the capitalized slug; localized names load in the modal on demand
-// to avoid one request per move (a pokemon can have 100+ moves).
 const PokemonMoves = ({ moves }: Props) => {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [selectedMove, setSelectedMove] = useState<string | null>(null);
 
   return (
@@ -31,15 +28,7 @@ const PokemonMoves = ({ moves }: Props) => {
         </h2>
         <div className="flex flex-wrap gap-2 max-h-50 overflow-y-auto">
           {moves.map(({ move }) => (
-            <button
-              key={move.name}
-              onClick={() => setSelectedMove(move.name)}
-              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-            >
-              <Badge variant="outline" className="cursor-pointer hover:bg-muted transition-colors">
-                {capitalize(move.name)}
-              </Badge>
-            </button>
+            <MoveBadge key={move.name} name={move.name} locale={locale} onSelect={setSelectedMove} />
           ))}
         </div>
       </section>

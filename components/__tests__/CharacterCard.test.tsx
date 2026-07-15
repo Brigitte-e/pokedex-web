@@ -8,41 +8,26 @@ jest.mock("@/components/LazyImage", () => ({
   ),
 }));
 
-jest.mock("next/link", () => {
-  const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  );
-  MockLink.displayName = "Link";
-  return MockLink;
-});
-
 describe("CharacterCard", () => {
   it("renders the localized display name when provided", () => {
-    render(
-      <CharacterCard id={25} name="pikachu" displayName="Pikachu" locale="en" />,
-    );
+    render(<CharacterCard id={25} name="pikachu" displayName="Pikachu" />);
     expect(screen.getByText("Pikachu")).toBeInTheDocument();
   });
 
   it("renders the sprite image", () => {
-    render(<CharacterCard id={25} name="pikachu" locale="en" />);
+    render(<CharacterCard id={25} name="pikachu" displayName="Pikachu" />);
     const img = screen.getByRole("img", { name: "Pikachu" });
     expect(img).toBeInTheDocument();
     expect(img).toHaveAttribute("src", expect.stringContaining("25"));
   });
 
   it("renders type badges when types are provided", () => {
-    render(<CharacterCard id={25} name="pikachu" types={["electric"]} locale="en" />);
+    render(<CharacterCard id={25} name="pikachu" types={["electric"]} />);
     expect(screen.getByText("electric")).toBeInTheDocument();
   });
 
-  it("links to the correct Pokémon page", () => {
-    render(<CharacterCard id={25} name="pikachu" locale="en" />);
-    expect(screen.getByRole("link")).toHaveAttribute("href", "/en/pokemon/pikachu");
-  });
-
   it("does not flash an English fallback while localized names are loading", () => {
-    render(<CharacterCard id={25} name="pikachu" locale="de" />);
+    render(<CharacterCard id={25} name="pikachu" />);
     expect(screen.queryByText("Pikachu")).not.toBeInTheDocument();
     expect(document.querySelector(".animate-pulse")).toBeInTheDocument();
   });

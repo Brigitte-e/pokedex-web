@@ -1,19 +1,4 @@
-import { getVisiblePages, parsePageParam } from "../pagination/pagination";
-
-describe("parsePageParam", () => {
-  it("returns 1 for missing or invalid values", () => {
-    expect(parsePageParam()).toBe(1);
-    expect(parsePageParam("")).toBe(1);
-    expect(parsePageParam("0")).toBe(1);
-    expect(parsePageParam("-2")).toBe(1);
-    expect(parsePageParam("abc")).toBe(1);
-  });
-
-  it("parses valid page numbers", () => {
-    expect(parsePageParam("3")).toBe(3);
-    expect(parsePageParam(["5"])).toBe(5);
-  });
-});
+import { getVisiblePages } from "../pagination/pagination";
 
 describe("getVisiblePages", () => {
   it("returns all pages when total is small", () => {

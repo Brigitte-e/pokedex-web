@@ -18,7 +18,7 @@ describe("Types", () => {
 
   it("navigates back to the types overview", () => {
     cy.visit("/en/types/fire");
-    cy.contains("a", "Back to Types").click();
+    cy.contains("a", "Back").click();
     cy.location("pathname").should("eq", "/en/types");
   });
 });

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { LazyImage } from "@/components/LazyImage";
 import { cn } from "@/lib/utils/cn";
@@ -13,7 +12,6 @@ interface Props {
   typeNameMap?: Map<string, string>;
   className?: string;
   fetchPriority?: "high" | "low" | "auto";
-  locale: string;
 }
 
 const CharacterCard = ({
@@ -24,11 +22,9 @@ const CharacterCard = ({
   typeNameMap,
   className,
   fetchPriority,
-  locale,
 }: Props) => {
   const sprite = getPokemonSprite(id);
 
-  const href = `/${locale}/pokemon/${name}`;
   const label = displayName ?? capitalize(name);
   const showNamePlaceholder = !displayName;
 
@@ -39,8 +35,7 @@ const CharacterCard = ({
         className
       )}
     >
-      <Link
-        href={href}
+      <div
         className="flex flex-col items-center gap-3 p-5 text-center"
       >
         <div className="relative h-24 w-24">
@@ -87,7 +82,7 @@ const CharacterCard = ({
             </div>
           )}
         </div>
-      </Link>
+      </div>
     </Card>
   );
 };

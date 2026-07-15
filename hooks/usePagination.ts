@@ -2,19 +2,18 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { parsePageParam } from "@/components/pagination/pagination";
+import { parsePageParam } from "@/lib/utils/parsePageParam";
 
 interface Options {
   pageSize: number;
   initialCount?: number;
-  initialPage?: number;
 }
 
-export function usePagination({ pageSize, initialCount, initialPage }: Options) {
+export function usePagination({ pageSize, initialCount }: Options) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const urlPage = parsePageParam(searchParams.get("page") ?? undefined);
-  const [page, setPageState] = useState(initialPage ?? urlPage);
+  const { page: urlPage = 1 } = parsePageParam({ page: searchParams.get("page") ?? undefined });
+  const [page, setPageState] = useState(urlPage);
   const [count, setCount] = useState(initialCount);
   const skipUrlSyncRef = useRef(false);
   const isInitialMountRef = useRef(true);

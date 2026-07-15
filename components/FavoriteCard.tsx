@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { CharacterCard } from "@/components/CharacterCard";
 import {
   Dialog,
@@ -24,14 +25,18 @@ const FavoriteCard = ({ id, name, displayName, onRemove }: Props) => {
   const [open, setOpen] = useState(false);
   const removeLabel = t("favorites.remove");
 
-  function handleConfirm() {
+  const handleConfirm = () => {
     setOpen(false);
     onRemove();
   }
 
+  const backHref = `/${locale}/favorites`;
+
   return (
     <div className="relative group/fav">
-      <CharacterCard id={id} name={name} displayName={displayName} locale={locale} />
+      <Link href={`/${locale}/pokemon/${name}?backHref=${encodeURIComponent(backHref)}`}>
+        <CharacterCard id={id} name={name} displayName={displayName} />
+      </Link>
       <button
         onClick={() => setOpen(true)}
         className="absolute top-2 right-2 rounded-full bg-background/80 p-1 text-xs text-muted-foreground opacity-0 group-hover/fav:opacity-100 hover:text-destructive transition-all"

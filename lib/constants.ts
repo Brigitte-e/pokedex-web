@@ -15,7 +15,6 @@ export const API_REVALIDATE_SECONDS = 3600;
 export const POKEMON_LIST_PAGE_SIZE = 24;
 export const ITEM_LIST_PAGE_SIZE = 28;
 export const MOVE_LIST_PAGE_SIZE = 28;
-export const TYPE_FILTER_PAGE_SIZE = 10;
 
 export const STAT_MAX = 255;
 export const MAX_TEAM_SIZE = 6;

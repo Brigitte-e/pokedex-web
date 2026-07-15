@@ -30,6 +30,14 @@ describe("FavoriteCard", () => {
     expect(screen.getByText("Pikachu")).toBeInTheDocument();
   });
 
+  it("links to the pokemon detail page", () => {
+    render(<FavoriteCard {...defaultProps} />);
+    expect(screen.getByRole("link")).toHaveAttribute(
+      "href",
+      "/en/pokemon/pikachu?backHref=%2Fen%2Ffavorites",
+    );
+  });
+
   it("falls back to default labels when none are provided", async () => {
     render(<FavoriteCard id={25} name="pikachu" onRemove={jest.fn()} />);
     await userEvent.click(screen.getByRole("button", { name: "Remove from favorites" }));

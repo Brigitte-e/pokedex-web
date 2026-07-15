@@ -40,21 +40,6 @@
     "confirmClearAll": "Möchtest du wirklich alle Pokémon aus den Favoriten entfernen?",
     "confirmClearAllConfirm": "Alle löschen"
   },
-  "typeFilter": {
-    "filterByType": "Nach Typ filtern",
-    "typesSelected": "{count} Typen ausgewählt",
-    "clearAll": "Alle löschen",
-    "searchPlaceholder": "Typen suchen…",
-    "noTypesFound": "Keine Typen gefunden",
-    "scrollForMore": "Weiter scrollen…",
-    "removeType": "{name} entfernen",
-    "clearSearch": "Suche löschen"
-  },
-  "generationFilter": {
-    "filterByGeneration": "Nach Generation filtern",
-    "allGenerations": "Alle Generationen",
-    "generation": "Generation {suffix}"
-  },
   "moveModal": {
     "power": "Stärke",
     "accuracy": "Genauigkeit",
@@ -85,20 +70,15 @@
       "subtitle": "Entdecke jeden Tag ein neues Pokémon."
     },
     "pokedex": {
-      "title": "Pokédex"
+      "title": "Pokémon"
     }
   },
   "pokemonList": {
-    "withType": "Pokémon mit diesem Typ",
-    "matchingTypes": "Pokémon mit allen ausgewählten Typen",
-    "fromGeneration": "Pokémon aus {generation}",
-    "matchingFilters": "Pokémon nach Filtern",
     "noMatch": "Kein Pokémon entspricht den ausgewählten Filtern.",
     "moreCount": "+ {count} weitere Pokémon",
     "all": "Alle Pokémon"
   },
   "pokemonDetail": {
-    "backToPokedex": "Zurück zum Pokédex",
     "height": "Größe",
     "weight": "Gewicht",
     "baseXp": "Basis-EP",
@@ -123,7 +103,6 @@
     "status": "Status"
   },
   "typeDetail": {
-    "backToTypes": "Zurück zu Typen",
     "damageRelations": "Schadensbeziehungen",
     "strongAgainst": "Stark gegen (2×)",
     "weakAgainst": "Schwach gegen (2× von)",

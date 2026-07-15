@@ -1,5 +1,5 @@
 import { render, screen, cleanup } from "@testing-library/react";
-import PokemonLoading from "../pokemon/loading";
+import PokemonLoading from "../pokemon/(list)/loading";
 import PokemonDetailLoading from "../pokemon/[name]/loading";
 import ItemsLoading from "../items/loading";
 import MovesLoading from "../moves/loading";

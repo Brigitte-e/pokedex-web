@@ -49,7 +49,7 @@ describe("TypeDetailPage", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Fire" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Grass" })).toHaveAttribute("href", "/en/types/grass");
     expect(screen.getByRole("button", { name: "Ember" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Back to types/i })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /Back/i })).toHaveAttribute(
       "href",
       "/en/types",
     );

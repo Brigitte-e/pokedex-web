@@ -9,7 +9,6 @@ interface Props {
   subtitleKey?: string;
   subtitleParams?: Record<string, string | number>;
   backHref?: string;
-  backLabelKey?: string;
   rightSlot?: ReactNode;
 }
 
@@ -18,7 +17,6 @@ const PageHeader = ({
   subtitleKey,
   subtitleParams,
   backHref,
-  backLabelKey = "common.back",
   rightSlot,
 }: Props) => {
   const { t } = useTranslation();
@@ -29,7 +27,7 @@ const PageHeader = ({
           href={backHref}
           className="inline-flex items-center gap-1 text-sm font-medium text-pk-yellow/60 hover:text-pk-yellow transition-colors mb-4"
         >
-          ← {t(backLabelKey)}
+          ← {t("common.back")}
         </Link>
       )}
       <div className="flex items-start justify-between gap-4">

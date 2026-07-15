@@ -23,7 +23,7 @@ describe("Pokemon detail", () => {
   });
 
   it("navigates back to the pokedex", () => {
-    cy.contains("a", "Back to Pokédex").click();
+    cy.contains("a", "Back").click();
     cy.location("pathname").should("eq", "/en/pokemon");
   });
 });

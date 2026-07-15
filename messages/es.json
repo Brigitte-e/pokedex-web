@@ -40,21 +40,6 @@
     "confirmClearAll": "¿Realmente quieres eliminar todos los Pokémon de favoritos?",
     "confirmClearAllConfirm": "Borrar todo"
   },
-  "typeFilter": {
-    "filterByType": "Filtrar por tipo",
-    "typesSelected": "{count} tipos seleccionados",
-    "clearAll": "Borrar todo",
-    "searchPlaceholder": "Buscar tipos…",
-    "noTypesFound": "No se encontraron tipos",
-    "scrollForMore": "Desliza para más…",
-    "removeType": "Quitar {name}",
-    "clearSearch": "Borrar búsqueda"
-  },
-  "generationFilter": {
-    "filterByGeneration": "Filtrar por generación",
-    "allGenerations": "Todas las generaciones",
-    "generation": "Generación {suffix}"
-  },
   "moveModal": {
     "power": "Poder",
     "accuracy": "Precisión",
@@ -85,20 +70,15 @@
       "subtitle": "Descubre un nuevo Pokémon cada día."
     },
     "pokedex": {
-      "title": "Pokédex"
+      "title": "Pokémon"
     }
   },
   "pokemonList": {
-    "withType": "Pokémon con este tipo",
-    "matchingTypes": "Pokémon que coinciden con todos los tipos seleccionados",
-    "fromGeneration": "Pokémon de {generation}",
-    "matchingFilters": "Pokémon que coinciden con los filtros",
     "noMatch": "Ningún Pokémon coincide con los filtros seleccionados.",
     "moreCount": "+ {count} Pokémon más",
     "all": "Todos los Pokémon"
   },
   "pokemonDetail": {
-    "backToPokedex": "Volver a la Pokédex",
     "height": "Altura",
     "weight": "Peso",
     "baseXp": "XP Base",
@@ -123,7 +103,6 @@
     "status": "Estado"
   },
   "typeDetail": {
-    "backToTypes": "Volver a Tipos",
     "damageRelations": "Relaciones de Daño",
     "strongAgainst": "Fuerte contra (2×)",
     "weakAgainst": "Débil contra (2× de)",

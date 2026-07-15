@@ -37,13 +37,6 @@ describe("usePagination", () => {
     expect(result.current.page).toBe(3);
   });
 
-  it("uses initialPage when the query param is not yet available", () => {
-    const { result } = renderHook(() =>
-      usePagination({ pageSize: PAGE_SIZE, initialCount: LARGE_COUNT, initialPage: 3 }),
-    );
-    expect(result.current.page).toBe(3);
-  });
-
   it("sets the page query param when navigating forward", () => {
     const { result } = renderHook(() =>
       usePagination({ pageSize: PAGE_SIZE, initialCount: LARGE_COUNT }),

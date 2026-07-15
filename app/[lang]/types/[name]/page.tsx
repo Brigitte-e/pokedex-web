@@ -50,10 +50,7 @@ export default async function TypeDetailPage({ params }: Props) {
 
   return (
     <PageContainer>
-      <PageHeader
-        backHref={`/${locale}/types`}
-        backLabelKey="typeDetail.backToTypes"
-      />
+      <PageHeader backHref={`/${locale}/types`} />
       <div className="flex flex-col gap-6">
         <TypeHeader name={type.name} localizedName={localizedTypeName} />
         <TypeDamageRelations type={type} typeNameMap={typeNameMap} />
