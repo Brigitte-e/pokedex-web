@@ -43,6 +43,7 @@ function renderList(initial?: ListResponse, initialPage = 1) {
     <QueryClientProvider client={client}>
       <PokemonListBoundary initialData={initial} initialPage={initialPage} />
     </QueryClientProvider>,
+    { onCaughtError: () => {} },
   );
 }
 

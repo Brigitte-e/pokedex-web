@@ -111,6 +111,7 @@ describe("PokemonDetailFeature", () => {
     await renderFeatureWithClient();
     expect(screen.getByRole("heading", { name: "Pikachu" })).toBeInTheDocument();
     expect(screen.getByText("Static")).toBeInTheDocument();
+    expect(await screen.findByText("Thunderbolt")).toBeInTheDocument();
   });
 
   it("calls notFound for unknown pokemon", async () => {
